@@ -165,6 +165,7 @@ router.get("/users", authUser("owner", "operador"), validateCompanyAndUserStatus
 router.post("/users", authUser("owner", "operador"), validateCompanyAndUserStatus,assignCompanyIdAndValidateRole,userController.createUser);
 router.post("/users/:user_id", authUser("owner", "operador"), validateCompanyAndUserStatus,userController.restoreUser);
 
+router.get("/especialidades", authUser("owner", "operador"), validateCompanyAndUserStatus,especialidadController.getAllEspecialidades);
 router.post("/especialidades", authUser("owner"), validateCompanyAndUserStatus,especialidadController.createEspecialidad);
 router.put("/especialidades/:especialidadId", authUser("owner"), validateCompanyAndUserStatus,especialidadController.updateEspecialidad);
 router.post("/especialidades/:id_usuario", authUser("owner"), validateCompanyAndUserStatus,userController.asignarEspecialidadManual);

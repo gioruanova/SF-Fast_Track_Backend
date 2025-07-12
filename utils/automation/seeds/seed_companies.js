@@ -21,6 +21,8 @@ exports.seed = async function (knex) {
       company_telegram: "123456789",
       company_email: "contacto@empresados.com",
       company_estado: true,
+      reminder_manual: 0
     },
   ]);
 };
+

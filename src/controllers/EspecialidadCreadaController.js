@@ -87,7 +87,19 @@ async function updateEspecialidad(req, res) {
   }
 }
 
+async function getAllEspecialidades(req, res) {
+  try {
+    const company_id = req.user?.company_id;
+    const especialidades = await EspecialidadCreada.query().where({ company_id });
+    return res.json(especialidades);
+  } catch (error) {
+    console.error("Error al obtener especialidades:", error);
+    return res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+
 module.exports = {
   createEspecialidad,
   updateEspecialidad,
+  getAllEspecialidades
 };
