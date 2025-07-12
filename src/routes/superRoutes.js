@@ -1,3 +1,38 @@
+const express = require("express");
+const router = express.Router();
+
+// middelware para super admin
+const authSuperadmin = require("../middlewares/authSuperadmin");
+// controllers
+const CompanyController = require("../controllers/companyController");
+const authSuperController = require("../controllers/authSuperController");
+const userController = require("../controllers/userController");
+
+// =========================================================
+
+// ruta abierta para login y refres
+router.post("/login", authSuperController.login);
+router.post("/refresh", authSuperController.refreshToken);
+
+// rutas para manejo de users
+router.get("/users", authSuperadmin, userController.getAll);
+router.post("/users",authSuperadmin, userController.createUser);
+router.post("/users/:user_id", authSuperadmin, userController.restoreUser);
+
+// rutas para manejo de empresas
+router.get("/companies", authSuperadmin, CompanyController.getAllCompanies); 
+router.post("/companies", authSuperadmin, CompanyController.createCompany);
+router.post("/companies/:company_id", authSuperadmin, CompanyController.getCompanyById);
+router.put("/companies/:company_id", authSuperadmin, CompanyController.updateCompany);
+
+module.exports = router;
+
+
+
+// =========================================================
+// DOCUMENTACION SWAGGER
+// =========================================================
+
 /**
  * @swagger
  * tags:
@@ -141,26 +176,3 @@
  *       500:
  *         description: Error interno del servidor
  */
-const express = require("express");
-const CompanyController = require("../controllers/companyController");
-const authSuperController = require("../controllers/authSuperController");
-const userController = require("../controllers/userController");
-const authSuperadmin = require("../middlewares/authSuperadmin");
-
-const router = express.Router();
-
-router.post("/login", authSuperController.login);
-router.post("/refresh", authSuperController.refreshToken);
-
-// Users
-router.get("/users", authSuperadmin, userController.getAll);
-router.post("/users",authSuperadmin, userController.createUser);
-router.post("/users/:user_id", authSuperadmin, userController.restoreUser);
-
-// Companies
-router.get("/companies", authSuperadmin, CompanyController.getAllCompanies); 
-router.post("/companies", authSuperadmin, CompanyController.createCompany);
-router.post("/companies/:company_id", authSuperadmin, CompanyController.getCompanyById);
-router.put("/companies/:company_id", authSuperadmin, CompanyController.updateCompany);
-
-module.exports = router;
