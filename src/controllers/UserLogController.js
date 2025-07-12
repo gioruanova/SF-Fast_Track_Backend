@@ -13,11 +13,11 @@ async function registrarIntentoFallido(user_id) {
 }
 
 async function deleteLogByYserid(user_id) {
-  return await UserLog.query().delete().where({ user_id })
+  return await UserLog.query().delete().where({ user_id });
 }
 
 module.exports = {
   contarLogsPorUsuario,
   registrarIntentoFallido,
-  deleteLogByYserid
+  deleteLogByYserid,
 };

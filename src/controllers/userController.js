@@ -1,6 +1,5 @@
 const User = require("../models/User");
-const UserLog = require("../models/UserLog");
-const UserLogController = require("../controllers/UserLogController");
+const userLogController = require("./userLogController");
 const ProfesionaleSespecialidad = require("../models/ProfesionalesEspecialidad");
 const bcrypt = require("bcrypt");
 // const { transaction } = require("objection");
@@ -22,7 +21,7 @@ async function getAll(req, res) {
         "updated_at"
       )
       .withGraphFetched(
-        "especialidades.especialidadCreada(selectNombreEspecialidad)"
+        "especialidades.Especialidad(selectNombreEspecialidad)"
       )
       .modifiers({
         selectNombreEspecialidad(builder) {
@@ -56,7 +55,7 @@ async function getUsersByCompany(req, res) {
       )
       .where("company_id", companyId)
       .withGraphFetched(
-        "especialidades.especialidadCreada(selectNombreEspecialidad)"
+        "especialidades.Especialidad(selectNombreEspecialidad)"
       )
       .modifiers({
         selectNombreEspecialidad(builder) {
@@ -240,7 +239,7 @@ async function bloquearUsuarioPorId(user_id) {
 }
 
 async function habilitarUsuarioPorId(user_id) {
-  await UserLogController.deleteLogByYserid(user_id);
+  await userLogController.deleteLogByYserid(user_id);
   return await User.query().patchAndFetchById(user_id, { user_status: true });
 }
 

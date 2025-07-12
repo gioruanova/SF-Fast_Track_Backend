@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const { generateTokens, refreshAccessToken } = require("./tokenService");
-const UserLogController = require("../controllers/UserLogController");
+const userLogController = require("../controllers/userLogController");
 const userController = require("../controllers/userController");
 
 async function loginUser(email, password) {
@@ -21,19 +21,19 @@ async function loginUser(email, password) {
   const valid = await bcrypt.compare(password, user.user_password);
 
   if (!valid) {
-    let fallosPrevios = await UserLogController.contarLogsPorUsuario(
+    let fallosPrevios = await userLogController.contarLogsPorUsuario(
       user.user_id
     );
 
     if (fallosPrevios < 3) {
-      await UserLogController.registrarIntentoFallido(user.user_id);
-      fallosPrevios = await UserLogController.contarLogsPorUsuario(
+      await userLogController.registrarIntentoFallido(user.user_id);
+      fallosPrevios = await userLogController.contarLogsPorUsuario(
         user.user_id
       );
       return null;
     }
 
-    fallosPrevios = await UserLogController.contarLogsPorUsuario(user.user_id);
+    fallosPrevios = await userLogController.contarLogsPorUsuario(user.user_id);
 
     if (fallosPrevios == 3) {
       await userController.bloquearUsuarioPorId(user.user_id);

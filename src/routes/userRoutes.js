@@ -10,7 +10,7 @@ const assignCompanyIdAndValidateRole = require("../middlewares/assignCompanyIdAn
 
 // controladores
 const userController = require("../controllers/userController");
-const especialidadController = require("../controllers/EspecialidadCreadaController");
+const especialidadController = require("../controllers/especialidadController");
 
 // // utilitarios
 // const exportCompanyExcel = require("../controllers/exportToExcelCompany");

@@ -2,8 +2,8 @@ const Company = require("../models/Company");
 
 async function getAllCompanies(req, res) {
   try {
-    const companies = await Company.query();
-    // const companies = await Company.query().withGraphJoined("users").withGraphFetched("users.especialidades.especialidadCreada");
+    // const companies = await Company.query();
+    const companies = await Company.query().withGraphJoined("users").withGraphFetched("users.especialidades.Especialidad");
     return res.json(companies);
   } catch (error) {
     console.error("Error al obtener empresas:", error);

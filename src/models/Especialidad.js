@@ -1,6 +1,6 @@
 const BaseModel = require("../db/BaseModel");
 
-class EspecialidadCreada extends BaseModel {
+class Especialidad extends BaseModel {
   static get tableName() {
     return "especialidades";
   }
@@ -37,4 +37,4 @@ class EspecialidadCreada extends BaseModel {
   }
 }
 
-module.exports = EspecialidadCreada;
+module.exports = Especialidad;

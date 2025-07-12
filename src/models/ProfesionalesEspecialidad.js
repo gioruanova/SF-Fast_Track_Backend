@@ -25,7 +25,7 @@ class ProfesionalEspecialidad extends BaseModel {
   static get relationMappings() {
     const User = require("./User");
     const Company = require("./Company");
-    const EspecialidadCreada = require("./EspecialidadCreada");
+    const Especialidad = require("./Especialidad");
 
     return {
       usuario: {
@@ -44,9 +44,9 @@ class ProfesionalEspecialidad extends BaseModel {
           to: "companies.company_id",
         },
       },
-      especialidadCreada: {
+      Especialidad: {
         relation: BaseModel.BelongsToOneRelation,
-        modelClass: EspecialidadCreada,
+        modelClass: Especialidad,
         join: {
           from: "profesionales_especialidad.id_especialidad_creada",
           to: "especialidades.id_especialidad",

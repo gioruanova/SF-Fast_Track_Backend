@@ -1,4 +1,4 @@
-const EspecialidadCreada = require("../models/EspecialidadCreada");
+const Especialidad = require("../models/Especialidad");
 
 async function createEspecialidad(req, res) {
   try {
@@ -12,7 +12,7 @@ async function createEspecialidad(req, res) {
         .json({ error: "nombre_especialidad son requeridos" });
     }
 
-    const existing = await EspecialidadCreada.query()
+    const existing = await Especialidad.query()
       .where({ company_id: comp_id, nombre_especialidad })
       .first();
 
@@ -22,7 +22,7 @@ async function createEspecialidad(req, res) {
         .json({ error: "La especialidad ya existe para esta empresa" });
     }
 
-    const nuevaEspecialidad = await EspecialidadCreada.query().insert({
+    const nuevaEspecialidad = await Especialidad.query().insert({
       company_id: comp_id,
       nombre_especialidad,
     });
@@ -46,7 +46,7 @@ async function updateEspecialidad(req, res) {
         .json({ error: "El campo nombre_especialidad es requerido" });
     }
 
-    const especialidad = await EspecialidadCreada.query()
+    const especialidad = await Especialidad.query()
       .findById(especialidadId)
       .where("company_id", company_id);
 
@@ -54,7 +54,7 @@ async function updateEspecialidad(req, res) {
       return res.status(404).json({ error: "Especialidad no encontrada" });
     }
 
-    const existente = await EspecialidadCreada.query()
+    const existente = await Especialidad.query()
       .where({
         company_id,
         nombre_especialidad,
@@ -68,7 +68,7 @@ async function updateEspecialidad(req, res) {
         .json({ error: "Ya existe una especialidad con ese nombre" });
     }
 
-    const actualizada = await EspecialidadCreada.query().patchAndFetchById(
+    const actualizada = await Especialidad.query().patchAndFetchById(
       especialidadId,
       {
         nombre_especialidad,
@@ -90,7 +90,7 @@ async function updateEspecialidad(req, res) {
 async function getAllEspecialidades(req, res) {
   try {
     const company_id = req.user?.company_id;
-    const especialidades = await EspecialidadCreada.query().where({ company_id });
+    const especialidades = await Especialidad.query().where({ company_id });
     return res.json(especialidades);
   } catch (error) {
     console.error("Error al obtener especialidades:", error);
