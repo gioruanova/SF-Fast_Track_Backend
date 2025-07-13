@@ -22,11 +22,11 @@ router.post("/login", authUserController.login);
 router.post("/refresh", authUserController.refreshToken);
 
 // rutas para manejo de users
-router.post("/users",authUser("owner", "operador"),validateAccessStatus,userController.createUserAsClient); // CREATE >>> company condition in controller
-router.get("/users",authUser("owner", "operador"),validateAccessStatus,userController.getUsersAsClient); // OBTENER >>> company condition in controller
-router.post("/users/block/:user_id",authUser("owner"),validateAccessStatus,userController.blockUserAsClient); // BLOQUEAR >>> company condition in controller
-router.post("/users/unblock/:user_id",authUser("owner"),validateAccessStatus,userController.unblockUserAsClient); // DESBLOQUEAR >>> company condition in controller
-router.put("/users/restore/:user_id", authUser("owner"), userController.restoreUserAsClient); // RESTAURAR USUARIO CON RESETEO
+router.post("/users",authUser("owner", "operador"),validateAccessStatus,userController.createUserAsClient);
+router.get("/users",authUser("owner", "operador"),validateAccessStatus,userController.getUsersAsClient); 
+router.post("/users/block/:user_id",authUser("owner"),validateAccessStatus,userController.blockUserAsClient); 
+router.post("/users/unblock/:user_id",authUser("owner"),validateAccessStatus,userController.unblockUserAsClient); 
+router.put("/users/restore/:user_id", authUser("owner"), userController.restoreUserAsClient); 
 
 
 
