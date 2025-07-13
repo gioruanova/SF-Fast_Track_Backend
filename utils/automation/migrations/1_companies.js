@@ -11,6 +11,7 @@ exports.up = function (knex) {
       table.boolean("company_estado").notNullable().defaultTo(true);
       table.integer("limite_operadores").notNullable().defaultTo(3);
       table.integer("limite_profesionales").notNullable().defaultTo(10);
+      table.integer("limite_categorias").notNullable().defaultTo(10);
       table.boolean("reminder_manual").notNullable().defaultTo(true);
       table.timestamps(true, true);
     })
