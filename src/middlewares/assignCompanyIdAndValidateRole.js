@@ -1,5 +1,5 @@
 function assignCompanyIdAndValidateRole(req, res, next) {
-  const logedUser = req.user.role;
+  const logedUser = req.user.user_role;
   const allowedRoles = logedUser == "owner" ? ["profesional", "operador"] : ["profesional"]; 
 
 

@@ -1,4 +1,5 @@
 const Especialidad = require("../models/Especialidad");
+const ProfesionalesEspecialidad = require("../models/ProfesionalesEspecialidad");
 
 async function createEspecialidad(req, res) {
   try {
@@ -27,7 +28,9 @@ async function createEspecialidad(req, res) {
       nombre_especialidad,
     });
 
-    return res.status(201).json({success: true, message: "Especialidad creada correctamente"});
+    return res
+      .status(201)
+      .json({ success: true, message: "Especialidad creada correctamente" });
   } catch (error) {
     console.error("Error creando especialidad:", error);
     return res.status(500).json({ error: "Error interno del servidor" });
@@ -75,12 +78,10 @@ async function updateEspecialidad(req, res) {
       }
     );
 
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Especialidad actualizada correctamente",
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Especialidad actualizada correctamente",
+    });
   } catch (error) {
     console.error("Error actualizando especialidad:", error);
     return res.status(500).json({ error: "Error interno del servidor" });
@@ -98,8 +99,39 @@ async function getAllEspecialidades(req, res) {
   }
 }
 
+async function validarEspecialidad(id_especialidad, company_id) {
+  const especialidad = await Especialidad.query().findOne({
+    id_especialidad,
+    company_id,
+  });
+  if (!especialidad) {
+    return false;
+  }
+  return true;
+}
+
+
+async function addNewEspecialidadProfesional(
+  id_usuario,
+  id_especialidad_creada,
+  company_id
+) {
+  return await ProfesionalesEspecialidad.query().insert({
+    id_usuario,
+    id_especialidad_creada,
+    company_id,
+  });
+}
+
+async function eliminarEspecialidadesPorUsuario(id_usuario) {
+  await ProfesionalesEspecialidad.query().delete().where("id_usuario", id_usuario);
+}
+
 module.exports = {
   createEspecialidad,
   updateEspecialidad,
-  getAllEspecialidades
+  getAllEspecialidades,
+  validarEspecialidad,
+  addNewEspecialidadProfesional,
+  eliminarEspecialidadesPorUsuario
 };

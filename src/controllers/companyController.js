@@ -3,7 +3,9 @@ const Company = require("../models/Company");
 async function getAllCompanies(req, res) {
   try {
     // const companies = await Company.query();
-    const companies = await Company.query().withGraphJoined("users").withGraphFetched("users.especialidades.Especialidad");
+    const companies = await Company.query()
+      .withGraphJoined("users")
+      .withGraphFetched("users.especialidades.Especialidad");
     return res.json(companies);
   } catch (error) {
     console.error("Error al obtener empresas:", error);
@@ -14,7 +16,9 @@ async function getAllCompanies(req, res) {
 async function getCompanyById(req, res) {
   try {
     const { company_id } = req.params;
-    const company = await Company.query().findById(company_id).withGraphFetched("users");
+    const company = await Company.query()
+      .findById(company_id)
+      .withGraphFetched("users");
 
     if (!company) {
       return res.status(404).json({ error: "Empresa no encontrada" });
@@ -98,9 +102,32 @@ async function createCompany(req, res) {
   }
 }
 
+async function getLimitOperator(company_id) {
+  try {
+    const company = await Company.query().findById(company_id);
+    return company?.limite_operadores || 0;
+  } catch (error) {
+    console.error("Error al obtener el límite de operadores:", error);
+    throw error;
+  }
+}
+
+async function getLimitProfesionales(company_id) {
+  try {
+    const company = await Company.query().findById(company_id);
+    return company?.limite_profesionales || 0;
+  } catch (error) {
+    console.error("Error al obtener el límite de profesionales:", error);
+    throw error;
+  }
+}
+
+
 module.exports = {
   getAllCompanies,
   getCompanyById,
   updateCompany,
   createCompany,
+  getLimitProfesionales,
+  getLimitOperator,
 };

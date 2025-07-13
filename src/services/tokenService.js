@@ -30,7 +30,7 @@ function refreshAccessToken(refreshToken) {
       // Definir acá los campos que consideramos seguros para el accessToken
       user_id: decoded.user_id,
       email: decoded.email,
-      role: decoded.role,
+      user_role: decoded.user_role,
       company_id: decoded.company_id, // puede ser undefined en superadmin
     };
 

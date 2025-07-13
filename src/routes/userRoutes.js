@@ -1,16 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
-// middelware para usuarios
-const authUserController = require("../controllers/authUserController");
-const validateCompanyAndUserStatus = require("../middlewares/validateCompanyAndUserStatus");
-const authUser = require("../middlewares/authUser");
-const assignCompanyIdAndValidateRole = require("../middlewares/assignCompanyIdAndValidateRole");
-
-
 // controladores
+const authUserController = require("../controllers/authUserController");
 const userController = require("../controllers/userController");
 const especialidadController = require("../controllers/especialidadController");
+
+// middelware para usuarios
+const validateAccessStatus = require("../middlewares/validateAccessStatus");
+const authUser = require("../middlewares/authUser");
+
+
 
 // // utilitarios
 // const exportCompanyExcel = require("../controllers/exportToExcelCompany");
@@ -22,23 +22,19 @@ router.post("/login", authUserController.login);
 router.post("/refresh", authUserController.refreshToken);
 
 // rutas para manejo de users
-router.get("/users", authUser("owner", "operador"), validateCompanyAndUserStatus,userController.getUsersByCompany);
-router.post("/users", authUser("owner", "operador"), validateCompanyAndUserStatus,assignCompanyIdAndValidateRole,userController.createUser);
-router.post("/users/:user_id", authUser("owner", "operador"), validateCompanyAndUserStatus,userController.restoreUser);
+router.post("/users",authUser("owner", "operador"),validateAccessStatus,userController.createUser); // CREATE >>> company condition in controller
+router.get("/users",authUser("owner", "operador"),validateAccessStatus,userController.getUsersByCompany);
+router.post("/users/:user_id",authUser("owner", "operador"),validateAccessStatus,userController.restoreUser);
 
 // rutas para manejo de especialidaes
-router.get("/especialidades", authUser("owner", "operador"), validateCompanyAndUserStatus,especialidadController.getAllEspecialidades);
-router.post("/especialidades", authUser("owner"), validateCompanyAndUserStatus,especialidadController.createEspecialidad);
-router.put("/especialidades/:especialidadId", authUser("owner"), validateCompanyAndUserStatus,especialidadController.updateEspecialidad);
-router.post("/especialidades/:id_usuario", authUser("owner"), validateCompanyAndUserStatus,userController.asignarEspecialidadManual);
-
-
+router.get("/especialidades",authUser("owner", "operador"),validateAccessStatus,especialidadController.getAllEspecialidades);
+router.post("/especialidades",authUser("owner"),validateAccessStatus,especialidadController.createEspecialidad);
+router.put("/especialidades/:especialidadId",authUser("owner"),validateAccessStatus,especialidadController.updateEspecialidad);
 
 // // utilitarios varios
-// router.get("/usersReport", authUser(), validateCompanyAndUserStatus, exportCompanyExcel.exportUsersByCompany);
+// router.get("/usersReport", authUser(), validateAccessStatus, exportCompanyExcel.exportUsersByCompany);
 
 module.exports = router;
-
 
 // =========================================================
 // DOCUMENTACION SWAGGER

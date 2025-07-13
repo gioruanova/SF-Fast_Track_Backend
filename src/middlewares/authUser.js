@@ -15,7 +15,10 @@ function authUser(...allowedRoles) {
       const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
       req.user = decoded;
 
-      if (allowedRoles.length > 0 && !allowedRoles.includes(req.user.role)) {
+      if (
+        allowedRoles.length > 0 &&
+        !allowedRoles.includes(req.user.user_role)
+      ) {
         return res
           .status(403)
           .json({ error: "No autorizado para este recurso" });

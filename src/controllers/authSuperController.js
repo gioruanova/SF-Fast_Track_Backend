@@ -13,7 +13,7 @@ async function login(req, res) {
     return res.json({
       email: email, 
       name: tokens.name,
-      role: "superadmin",
+      user_role: "superadmin",
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
     });

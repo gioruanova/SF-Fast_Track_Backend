@@ -14,7 +14,7 @@ function authSuperadmin(req, res, next) {
   try {
     const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET);
 
-    if (decoded.role !== "superadmin") {
+    if (decoded.user_role !== "superadmin") {
       return res.status(403).json({ error: "No autorizado" });
       // TODO: Reemplazar esto por algo mas generico
     }

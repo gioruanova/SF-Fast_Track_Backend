@@ -1,7 +1,7 @@
 const Company = require("../models/Company");
 const User = require("../models/User");
 
-async function validateCompanyAndUserStatus(req, res, next) {
+async function validateAccessStatus(req, res, next) {
   try {
     const { company_id, user_id } = req.user;
 
@@ -35,4 +35,4 @@ async function validateCompanyAndUserStatus(req, res, next) {
   }
 }
 
-module.exports = validateCompanyAndUserStatus;
+module.exports = validateAccessStatus;

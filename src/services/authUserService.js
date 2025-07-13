@@ -5,7 +5,9 @@ const userLogController = require("../controllers/userLogController");
 const userController = require("../controllers/userController");
 
 async function loginUser(email, password) {
-  const user = await User.query().findOne({ user_email: email });
+  const user = await User.query()
+    .findOne({ user_email: email })
+    .withGraphFetched("company");
 
   if (!user) {
     // Usuario no existe
@@ -43,18 +45,23 @@ async function loginUser(email, password) {
 
   const payload = {
     user_id: user.user_id,
-    email: user.user_email,
-    role: user.user_role,
+    user_email: user.user_email,
+    user_name: user.user_complete_name,
+    user_role: user.user_role,
     company_id: user.company_id,
+    company_name: user.company.company_nombre,
+    company_status: user.company.company_estado,
   };
 
   const { accessToken, refreshToken } = generateTokens(payload);
 
   return {
-    email: user.user_email,
-    role: user.user_role,
+    company_name: user.company.company_nombre,
     company_id: user.company_id,
-
+    company_status: user.company.company_estado,
+    user_name: user.user_complete_name,
+    user_role: user.user_role,
+    user_email: user.user_email,
     accessToken,
     refreshToken,
   };

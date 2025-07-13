@@ -4,9 +4,9 @@ const router = express.Router();
 // middelware para super admin
 const authSuperadmin = require("../middlewares/authSuperadmin");
 // controllers
-const CompanyController = require("../controllers/companyController");
 const authSuperController = require("../controllers/authSuperController");
 const userController = require("../controllers/userController");
+const companyController = require("../controllers/companyController");
 
 // =========================================================
 
@@ -15,15 +15,16 @@ router.post("/login", authSuperController.login);
 router.post("/refresh", authSuperController.refreshToken);
 
 // rutas para manejo de users
+router.post("/users",authSuperadmin, userController.createUser); // CREATE >>> company condition in controller
+router.put("/users/:user_id", authSuperadmin, userController.updateUserBySuperadmin);
 router.get("/users", authSuperadmin, userController.getAll);
-router.post("/users",authSuperadmin, userController.createUser);
 router.post("/users/:user_id", authSuperadmin, userController.restoreUser);
 
 // rutas para manejo de empresas
-router.get("/companies", authSuperadmin, CompanyController.getAllCompanies); 
-router.post("/companies", authSuperadmin, CompanyController.createCompany);
-router.post("/companies/:company_id", authSuperadmin, CompanyController.getCompanyById);
-router.put("/companies/:company_id", authSuperadmin, CompanyController.updateCompany);
+router.get("/companies", authSuperadmin, companyController.getAllCompanies); 
+router.post("/companies", authSuperadmin, companyController.createCompany);
+router.post("/companies/:company_id", authSuperadmin, companyController.getCompanyById);
+router.put("/companies/:company_id", authSuperadmin, companyController.updateCompany);
 
 module.exports = router;
 

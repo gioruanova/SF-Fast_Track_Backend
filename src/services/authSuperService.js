@@ -13,7 +13,7 @@ async function loginAdmin(email, password) {
   const payload = {
     email,
     name: SUPERADMIN_NAME,
-    role: "superadmin",
+    user_role: "superadmin",
   };
 
   const tokens = generateTokens(payload);
@@ -23,7 +23,7 @@ async function loginAdmin(email, password) {
     ...tokens,
     email: payload.email,
     name: payload.name,
-    role: payload.role,
+    user_role: payload.user_role,
   };
 }
 
