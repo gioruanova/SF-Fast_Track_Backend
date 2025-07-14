@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-// middelware para super admin
+// middleware
 const authSuperadmin = require("../middlewares/authSuperadmin");
 
 // controllers
@@ -10,41 +10,54 @@ const userController = require("../controllers/userController");
 const companyController = require("../controllers/companyController");
 const especialidadController = require("../controllers/especialidadController");
 
-// =========================================================
-
-// ruta abierta para login y refres
+// =======================
+// Rutas publicas
 router.post("/login", authSuperController.login);
 router.post("/refresh", authSuperController.refreshToken);
 
-// rutas para manejo de users
-router.post("/users",authSuperadmin, userController.createUserAsAdmin);  // CREAR USUARIO
-router.get("/users", authSuperadmin, userController.getUsersAsAdmin); // OBTENER USUARIOS
-router.get("/users/:company_id", authSuperadmin, userController.getUsersByCompanyAsAdmin); // OBTENER USUARIOS DE UNA EMPRESA
-router.post("/users/block/:user_id", authSuperadmin, userController.blockUserAsAdmin); // BLOQUEAR USUARIO POR ID
-router.post("/users/unblock/:user_id", authSuperadmin, userController.unblockUserAsAdmin); // DESBLOQUEAR USUARIO POR ID
-router.put("/users/restore/:user_id", authSuperadmin, userController.restoreUserAsAdmin); // RESTAURAR USUARIO CON RESETEO
+// =======================
+// Middleware global para rutas protegidas
+router.use(authSuperadmin);
 
-// rutas para manejo de especialidades
-router.get("/especialidades",authSuperadmin,especialidadController.getAllEspecialidadesAsAdmin); // TRAE TODAS LAS ESPECIALIDADES
-router.get("/especialidades/:company_id",authSuperadmin,especialidadController.getAllEspecialidadesByCompanyAsAdmin); // TRAE TODAS LAS ESPECIALIDADES POR EMPRESA
-router.post("/especialidades", authSuperadmin, especialidadController.createEspecialidadAsAdmin); // CREA ESPECIALIDAD SIN RESTRICCIONES
-router.put("/especialidades/:especialidadId",authSuperadmin,especialidadController.updateEspecialidadAsAdmin); // ATUALIZA CUALQUIER ESPECIALIDAD
-router.put("/especialidades/block/:especialidadId",authSuperadmin,especialidadController.disableEspecialidadAsAdmin); // ATUALIZA CUALQUIER ESPECIALIDAD
-router.put("/especialidades/unblock/:especialidadId",authSuperadmin,especialidadController.enableEspecialidadAsAdmin); // ATUALIZA CUALQUIER ESPECIALIDAD
+// =======================
+// Rutas protegidas
+// Manejo de users
+router.get("/users", userController.getUsersAsAdmin);
+router.get("/users/:company_id", userController.getUsersByCompanyAsAdmin);
+
+router.post("/users", userController.createUserAsAdmin);
+// crear aca endpoint para editar usuario con logica de no poder cambiar rol (exigir nueva creacion)
 
 
+router.post("/users/block/:user_id", userController.blockUserAsAdmin);
+router.post("/users/unblock/:user_id", userController.unblockUserAsAdmin);
+router.put("/users/restore/:user_id", userController.restoreUserAsAdmin);
 
+// --------------------------------------------------------------------------------------------------------------
+// Manejo de especialidades
+router.get("/especialidades", especialidadController.getAllEspecialidadesAsAdmin);
+router.get("/especialidades/:company_id", especialidadController.getAllEspecialidadesByCompanyAsAdmin);
 
-// rutas para manejo de empresas
-router.get("/companies", authSuperadmin, companyController.getAllCompanies); 
-router.post("/companies", authSuperadmin, companyController.createCompany);
-router.post("/companies/:company_id", authSuperadmin, companyController.getCompanyById);
-router.put("/companies/:company_id", authSuperadmin, companyController.updateCompany);
+router.post("/especialidades", especialidadController.createEspecialidadAsAdmin);
+router.put("/especialidades/:especialidadId", especialidadController.updateEspecialidadAsAdmin);
+// crear aca endpoint para asignar especialidad a usuario
+// crear aca endpoint para editar especialidad a usuario
+// crear aca endpoint para eliminar especialidad a usuario
+
+router.put("/especialidades/block/:especialidadId", especialidadController.disableEspecialidadAsAdmin);
+router.put("/especialidades/unblock/:especialidadId", especialidadController.enableEspecialidadAsAdmin);
+
+// --------------------------------------------------------------------------------------------------------------
+// Manejo de empresas
+router.get("/companies", companyController.getAllCompanies);
+router.post("/companies/:company_id", companyController.getCompanyById);
+
+router.post("/companies", companyController.createCompany);
+router.put("/companies/:company_id", companyController.updateCompany);
 
 module.exports = router;
 
 
-
 // =========================================================
 // DOCUMENTACION SWAGGER
-// =========================================================
+

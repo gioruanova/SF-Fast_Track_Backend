@@ -18,7 +18,6 @@ async function loginAdmin(email, password) {
 
   const tokens = generateTokens(payload);
 
-  // Devuelvo tokens + info para el front
   return {
     ...tokens,
     email: payload.email,

@@ -10,7 +10,6 @@ async function loginUser(email, password) {
     .withGraphFetched("company");
 
   if (!user) {
-    // Usuario no existe
     console.log("Usuario no encontrado");
     return null;
   }
@@ -70,7 +69,7 @@ async function loginUser(email, password) {
 function refreshUserToken(refreshToken) {
   try {
     const decoded = refreshAccessToken(refreshToken);
-    return decoded; // devuelve nuevo accessToken o null
+    return decoded;
   } catch {
     return null;
   }
