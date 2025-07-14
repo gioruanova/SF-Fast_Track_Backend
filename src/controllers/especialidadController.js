@@ -1,7 +1,9 @@
-const Especialidad = require("../models/Especialidad");
-const ProfesionalesEspecialidad = require("../models/ProfesionalesEspecialidad");
 const Company = require("../models/Company");
 const companyController = require("./companyController");
+
+const Especialidad = require("../models/Especialidad");
+
+const { registrarNuevoLog } = require("../controllers/globalLogController");
 
 // CONTROLADORES PARA ADMIN:
 // ---------------------------------------------------------
@@ -37,6 +39,11 @@ async function createEspecialidadAsAdmin(req, res) {
       company_id,
       nombre_especialidad,
     });
+
+    /*LOGGER*/ await registrarNuevoLog(
+      company_id,
+      "Se ha creado una nueva especialidad: " + nombre_especialidad
+    );
 
     return res
       .status(201)
@@ -74,6 +81,11 @@ async function updateEspecialidadAsAdmin(req, res) {
           company_id: especialidadExiste.company_id,
         });
     }
+
+    /*LOGGER*/ await registrarNuevoLog(
+      especialidadExiste.company_id,
+      "Se ha actualizado la especialidad: " + nombre_especialidad
+    );
 
     return res.status(200).json({
       success: true,
@@ -147,6 +159,12 @@ async function disableEspecialidadAsAdmin(req, res) {
         company_id: especialidadExiste.company_id,
       });
 
+    /*LOGGER*/ await registrarNuevoLog(
+      especialidadExiste.company_id,
+      "Se ha desactivo la especialidad: " +
+        especialidadExiste.nombre_especialidad
+    );
+
     return res.status(200).json({
       success: true,
       message: "Especialidad desactivada correctamente",
@@ -188,6 +206,12 @@ async function enableEspecialidadAsAdmin(req, res) {
         nombre_especialidad: especialidadExiste.nombre_especialidad,
         company_id: especialidadExiste.company_id,
       });
+
+    /*LOGGER*/ await registrarNuevoLog(
+      especialidadExiste.company_id,
+      "Se ha reactivo la especialidad: " +
+        especialidadExiste.nombre_especialidad
+    );
 
     return res.status(200).json({
       success: true,
@@ -258,6 +282,11 @@ async function createEspecialidadAsClient(req, res) {
         .json({ error: "Has alcanzado el limite de especialidades" });
     }
 
+    /*LOGGER*/ await registrarNuevoLog(
+      comp_id,
+      "Se ha creado la especialidad: " + nombre_especialidad
+    );
+
     return res
       .status(201)
       .json({ success: true, message: "Especialidad creada correctamente" });
@@ -307,6 +336,11 @@ async function updateEspecialidadAsClient(req, res) {
       nombre_especialidad,
     });
 
+    /*LOGGER*/ await registrarNuevoLog(
+      company_id,
+      "Se ha actualizado la especialidad: " + nombre_especialidad
+    );
+
     return res.status(200).json({
       success: true,
       message: "Especialidad actualizada correctamente",
@@ -345,6 +379,12 @@ async function disableEspecialidadAsClient(req, res) {
       company_id: especialidadToManage.company_id,
     });
 
+    /*LOGGER*/ await registrarNuevoLog(
+      company_id,
+      "Se ha desactivado la especialidad: " +
+        especialidadToManage.nombre_especialidad
+    );
+
     return res.status(200).json({
       success: true,
       message: "Especialidad desactivada correctamente",
@@ -380,6 +420,12 @@ async function enableEspecialidadAsClient(req, res) {
       nombre_especialidad: especialidadToManage.nombre_especialidad,
       company_id: especialidadToManage.company_id,
     });
+
+    /*LOGGER*/ await registrarNuevoLog(
+      company_id,
+      "Se ha reactivado la especialidad: " +
+        especialidadToManage.nombre_especialidad
+    );
 
     return res.status(200).json({
       success: true,

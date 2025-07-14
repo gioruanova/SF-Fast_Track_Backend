@@ -1,5 +1,7 @@
 const Company = require("../models/Company");
 
+const { registrarNuevoLog } = require("../controllers/globalLogController");
+
 async function getAllCompanies(req, res) {
   try {
     const companies = await Company.query()
@@ -92,6 +94,11 @@ async function createCompany(req, res) {
       company_estado: false, // inactiva por defecto
     });
 
+    /*LOGGER*/ await registrarNuevoLog(
+      newCompany.id_company,
+      "La empresa " + newCompany.company_nombre + " se ha creado con exito. "
+    );
+
     return res
       .status(201)
       .json({ success: true, message: "Empresa creada exitosamente" });
@@ -131,7 +138,6 @@ async function getLimitEspecialidades(company_id) {
   }
 }
 
-
 module.exports = {
   getAllCompanies,
   getCompanyById,
@@ -141,5 +147,5 @@ module.exports = {
   // Helpers
   getLimitProfesionales,
   getLimitOperator,
-  getLimitEspecialidades
+  getLimitEspecialidades,
 };

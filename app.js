@@ -1,9 +1,11 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
+
+const bodyParser = require("body-parser");
+
 const swaggerUI = require("swagger-ui-express");
 const swaggerSpec = require("./utils/swagger/swaggerConfig");
-const cors = require("cors");
-const bodyParser = require("body-parser");
 
 const app = express();
 const port = process.env.PORT || 8888;
@@ -14,15 +16,18 @@ const corsOptions = {
   allowedHeaders: "Content-Type",
 };
 
+// =====================================================================
+// routes
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
-
-app.use("/super",require("./src/routes/superRoutes"));
+app.use("/super", require("./src/routes/superRoutes"));
 app.use(require("./src/routes/userRoutes"));
 
+
+// =====================================================================
 // 404 fallback
 app.use((req, res) => {
   res.status(404).send(`
@@ -33,6 +38,8 @@ app.use((req, res) => {
   `);
 });
 
+// =====================================================================
+// running
 app.listen(port, "0.0.0.0", () => {
-  console.log(`🚀 Servidor Express escuchando en http://localhost:${port}`);
+  console.log(`Server up: \nhttp://localhost:${port}`);
 });

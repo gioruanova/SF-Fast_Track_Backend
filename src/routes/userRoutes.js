@@ -9,6 +9,9 @@ const authUserController = require("../controllers/authUserController");
 const userController = require("../controllers/userController");
 const especialidadController = require("../controllers/especialidadController");
 
+const globalLogController = require("../controllers/globalLogController");
+
+
 
 // // utilitarios
 // const exportCompanyExcel = require("../controllers/exportToExcelCompany");
@@ -48,6 +51,15 @@ router.put("/especialidades/unblock/:especialidadId",authUserWithStatus("owner")
 // --------------------------------------------------------------------------------------------------------------
 // // Manejo de features especiales
 // router.get("/usersReport", authUserWithStatus(),exportCompanyExcel.exportUsersByCompany);
+
+
+
+// --------------------------------------------------------------------------------------------------------------
+// Manejo de Logs
+router.get("/globalLogs",authUserWithStatus("owner", "operador"), globalLogController.getAllLogsAsClient);
+router.put("/globalLogs/read",authUserWithStatus("owner", "operador"), globalLogController.markAllLogsAsReadAsClient);
+router.put("/globalLogs/unread",authUserWithStatus("owner", "operador"), globalLogController.markAllLogsAsUnreadAsClient);
+router.delete("/globalLogs",authUserWithStatus("owner"), globalLogController.deleteLogsAsClient);
 
 module.exports = router;
 

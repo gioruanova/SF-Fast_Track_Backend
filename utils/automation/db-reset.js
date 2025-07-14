@@ -14,12 +14,12 @@ const dbName = process.env.DB_NAME;
 (async () => {
   try {
     await knex.raw(`DROP DATABASE IF EXISTS \`${dbName}\``);
-    console.log(`✔️ Database ${dbName} deleted.`);
+    console.log(` database ${dbName} deleted.`);
 
     await knex.raw(`CREATE DATABASE \`${dbName}\``);
-    console.log(`✅ Database ${dbName} created.`);
+    console.log(` database ${dbName} created.`);
   } catch (error) {
-    console.error("❌ Error:", error);
+    console.error(" error:", error);
   } finally {
     await knex.destroy();
   }

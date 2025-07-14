@@ -1,11 +1,13 @@
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
+
 const User = require("../models/User");
+const userLogController = require("./userLogController");
+
 const Company = require("../models/Company");
 const companyController = require("./companyController");
-const userLogController = require("./userLogController");
-const especialidadController = require("./especialidadController");
-const bcrypt = require("bcrypt");
-// const { transaction } = require("objection");
-const saltRounds = 10;
+
+const { registrarNuevoLog } = require("../controllers/globalLogController");
 
 // CONTROLADORES PARA ADMIN:
 // ---------------------------------------------------------
@@ -43,6 +45,11 @@ async function createUserAsAdmin(req, res) {
       user_role,
       company_id,
     });
+
+    /*LOGGER*/ await registrarNuevoLog(
+      newUser.company_id,
+      "El usuario " + newUser.user_complete_name + " ha sido creado"
+    );
 
     return res
       .status(201)
@@ -104,6 +111,11 @@ async function blockUserAsAdmin(req, res) {
 
     await bloquearUsuarioPorId(user_id);
 
+    /*LOGGER*/ await registrarNuevoLog(
+      userToBlock.company_id,
+      "El usuario " + userToBlock.user_complete_name + " ha sido bloqueado."
+    );
+
     return res
       .status(200)
       .json({ success: true, message: "Usuario bloqueado correctamente" });
@@ -127,6 +139,14 @@ async function unblockUserAsAdmin(req, res) {
         .status(400)
         .json({ error: "El usuario ya estaba desbloqueado" });
     await desbloquearUsuarioPorId(user_id);
+
+    /*LOGGER*/ await registrarNuevoLog(
+      userToUnblock.company_id,
+      "El usuario " +
+        userToUnblock.user_complete_name +
+        " ha sido desbloqueado."
+    );
+
     return res
       .status(200)
       .json({ success: true, message: "Usuario desbloqueado correctamente" });
@@ -159,6 +179,14 @@ async function restoreUserAsAdmin(req, res) {
 
     await resetPassword(user_id, new_password);
     habilitarUsuarioPorId(user_id);
+
+    /*LOGGER*/ await registrarNuevoLog(
+      userToRestore.company_id,
+      "El usuario " +
+        userToRestore.user_complete_name +
+        " ha sido desbloqueado y la contraseña ha sido reestablecida."
+    );
+
     return res
       .status(200)
       .json({ success: true, message: "Usuario restaurado correctamente" });
@@ -245,6 +273,11 @@ async function createUserAsClient(req, res) {
       company_id,
     });
 
+    /*LOGGER*/ await registrarNuevoLog(
+      newUser.company_id,
+      "El usuario " + newUser.user_complete_name + " ha sido creado"
+    );
+
     return res
       .status(201)
       .json({ success: true, message: "Usuario creado correctamente" });
@@ -319,6 +352,11 @@ async function blockUserAsClient(req, res) {
 
     await bloquearUsuarioPorId(user_id);
 
+    /*LOGGER*/ await registrarNuevoLog(
+      userToBlock.company_id,
+      "El usuario " + userToBlock.user_complete_name + " ha sido bloqueado."
+    );
+
     return res
       .status(200)
       .json({ success: true, message: "Usuario bloqueado correctamente" });
@@ -335,31 +373,36 @@ async function unblockUserAsClient(req, res) {
   const { user_id } = req.params;
 
   try {
-    const userToBlock = await User.query()
+    const userToUnblock = await User.query()
       .findById(user_id)
       .where("company_id", companyId);
 
-    if (!canManageAccess(req.user.user_role, userToBlock.user_role)) {
+    if (!canManageAccess(req.user.user_role, userToUnblock.user_role)) {
       return res
         .status(403)
         .json({ error: "No tenés permiso para gestionar este usuario" });
     }
 
-    if (!userToBlock) {
+    if (!userToUnblock) {
       return res.status(400).json({ error: "No existe usuario bajo ese ID" });
     }
 
-    if (userToBlock.user_id === req.user.user_id)
+    if (userToUnblock.user_id === req.user.user_id)
       return res
         .status(400)
         .json({ error: "No puedes desbloquear tu propio usuario" });
 
-    if (userToBlock.user_status === 1)
+    if (userToUnblock.user_status === 1)
       return res
         .status(400)
         .json({ error: "El usuario ya estaba desbloqueado" });
 
     await desbloquearUsuarioPorId(user_id);
+
+    /*LOGGER*/ await registrarNuevoLog(
+      userToUnblock.company_id,
+      "El usuario " + userToUnblock.user_complete_name + " ha sido bloqueado."
+    );
 
     return res
       .status(200)
@@ -404,6 +447,13 @@ async function restoreUserAsClient(req, res) {
 
     await resetPassword(user_id, new_password);
     habilitarUsuarioPorId(user_id);
+
+    /*LOGGER*/ await registrarNuevoLog(
+      userToRestore.company_id,
+      "El usuario " +
+        userToRestore.user_complete_name +
+        " ha sido desbloqueado y la contraseña ha sido reestablecida."
+    );
 
     return res
       .status(200)

@@ -9,6 +9,7 @@ const authSuperController = require("../controllers/authSuperController");
 const userController = require("../controllers/userController");
 const companyController = require("../controllers/companyController");
 const especialidadController = require("../controllers/especialidadController");
+const globalLogController = require("../controllers/globalLogController");
 
 // =======================
 // Rutas publicas
@@ -54,6 +55,16 @@ router.post("/companies/:company_id", companyController.getCompanyById);
 
 router.post("/companies", companyController.createCompany);
 router.put("/companies/:company_id", companyController.updateCompany);
+
+
+
+// --------------------------------------------------------------------------------------------------------------
+// Manejo de Logs
+router.get("/globalLogs", globalLogController.getAllLogsAsAdmin);
+router.get("/globalLogs/:company_id", globalLogController.getAllLogsByCompanyAsAdmin);
+
+
+
 
 module.exports = router;
 

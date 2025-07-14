@@ -1,8 +1,12 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+
 const { generateTokens, refreshAccessToken } = require("./tokenService");
+
 const userLogController = require("../controllers/userLogController");
 const userController = require("../controllers/userController");
+
+const {registrarNuevoLog} = require("../controllers/globalLogController");
 
 async function loginUser(email, password) {
   const user = await User.query()
@@ -10,12 +14,12 @@ async function loginUser(email, password) {
     .withGraphFetched("company");
 
   if (!user) {
-    console.log("Usuario no encontrado");
+    // console.log("Usuario no encontrado");
     return null;
   }
 
   if (!user.user_status) {
-    console.log("Usuario bloqueado");
+    // console.log("Usuario bloqueado");
     return { error: "blocked" };
   }
 
@@ -38,6 +42,7 @@ async function loginUser(email, password) {
 
     if (fallosPrevios == 3) {
       await userController.bloquearUsuarioPorId(user.user_id);
+      registrarNuevoLog(user.company_id, "El usuario " + user.user_complete_name + " ha sido bloqueado por varios intentos fallidos de ingreso.");
       return { error: "blocked" };
     }
   }
