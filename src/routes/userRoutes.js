@@ -40,7 +40,7 @@ router.put("/company/config",authUserWithStatus("owner"),companyConfigController
 router.get("/users",authUserWithStatus("owner", "operador"),userController.getUsersAsClient);
 
 router.post("/users",authUserWithStatus("owner", "operador"),userController.createUserAsClient);
-// crear aca endpoint para editar usuario con logica de no poder cambiar rol (exigir nueva creacion)
+// TODO: crear aca endpoint para editar usuario con logica de no poder cambiar rol (exigir nueva creacion)
 
 router.post("/users/block/:user_id",authUserWithStatus("owner"),userController.blockUserAsClient);
 router.post("/users/unblock/:user_id",authUserWithStatus("owner"),userController.unblockUserAsClient);
