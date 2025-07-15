@@ -6,8 +6,10 @@ const authUserWithStatus = require("../middlewares/authUserWithStatus");
 
 // controladores
 const authUserController = require("../controllers/authUserController");
-const companyController = require("../controllers/companyController");
 const userController = require("../controllers/userController");
+
+const companyController = require("../controllers/companyController");
+const companyConfigController = require("../controllers/companyConfigController");
 const especialidadController = require("../controllers/especialidadController");
 const profesionalEspecialidadController = require("../controllers/profesionalEspecialidadController");
 
@@ -30,7 +32,9 @@ router.post("/refresh", authUserController.refreshToken);
 // =======================
 // Rutas protegidas
 // Manejo de company
-router.put("/company/",authUserWithStatus("owner"),companyController.updateCompanyAsClient);
+router.put("/company",authUserWithStatus("owner"),companyController.updateCompanyAsClient);
+router.get("/company/config",authUserWithStatus("owner", "operador", "profesional"),companyConfigController.getCompanySettingsByClient);
+router.put("/company/config",authUserWithStatus("owner"),companyConfigController.updateCompanySettingsByClient);
 
 // Manejo de users
 router.get("/users",authUserWithStatus("owner", "operador"),userController.getUsersAsClient);
