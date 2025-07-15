@@ -18,6 +18,7 @@ const seeders = [
   "seed_companies.js",
   "seed_users.js",
   "seed_especialidades.js",
+  "seed_messages_categories.js",
 
   
   

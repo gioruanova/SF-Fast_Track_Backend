@@ -1,7 +1,7 @@
 // migracion para profesionales_especialidad
 exports.up = function(knex) {
   return knex.schema.createTable("profesionales_especialidad", function(table) {
-    table.increments("id_especialidad").primary();
+    table.increments("id_asignacion").primary();
 
     table
       .integer("id_usuario")
@@ -22,7 +22,7 @@ exports.up = function(knex) {
       .onUpdate("CASCADE");
 
     table
-      .integer("id_especialidad_creada")
+      .integer("id_especialidad")
       .unsigned()
       .notNullable()
       .references("id_especialidad")

@@ -9,6 +9,11 @@ const authSuperController = require("../controllers/authSuperController");
 const userController = require("../controllers/userController");
 const companyController = require("../controllers/companyController");
 const especialidadController = require("../controllers/especialidadController");
+const profesionalEspecialidadController = require("../controllers/profesionalEspecialidadController");
+
+const publicMessagesController = require("../controllers/cfv/publicMessagesController");
+const publicMessageCategoryController = require("../controllers/cfv/publicMessageCategoryController");
+
 const globalLogController = require("../controllers/globalLogController");
 
 // =======================
@@ -16,12 +21,33 @@ const globalLogController = require("../controllers/globalLogController");
 router.post("/login", authSuperController.login);
 router.post("/refresh", authSuperController.refreshToken);
 
+
 // =======================
 // Middleware global para rutas protegidas
 router.use(authSuperadmin);
 
 // =======================
 // Rutas protegidas
+// Mensajes publicos
+router.get("/messages", publicMessagesController.gettAlMessagesAsAdmin);
+router.put("/messages/read/:message_id", publicMessagesController.markMessageAsReadAsAdmin);
+router.put("/messages/unread/:message_id", publicMessagesController.markMessageAsUnreadAsAdmin);
+router.delete("/messages/:message_id", publicMessagesController.deleteMessageAsAdmin);
+
+// Categorias mensajes publicos
+router.get("/messageCategories", publicMessageCategoryController.getAllMessagesCategoriesAsAdmin);
+router.post("/messageCategories", publicMessageCategoryController.createMessageCategoryAsAdmin);
+router.put("/messageCategories/:category_id", publicMessageCategoryController.updateMessageCategoryAsAdmin);
+router.put("/messageCategories/disable/:category_id", publicMessageCategoryController.disableMessageCategoryAsAdmin);
+router.put("/messageCategories/enable/:category_id", publicMessageCategoryController.enableMessageCategoryAsAdmin);
+
+
+router.delete("/messageCategories/:category_id", publicMessageCategoryController.deleteCategoryMessageAsAdmin);
+
+
+
+
+
 // Manejo de users
 router.get("/users", userController.getUsersAsAdmin);
 router.get("/users/:company_id", userController.getUsersByCompanyAsAdmin);
@@ -41,12 +67,15 @@ router.get("/especialidades/:company_id", especialidadController.getAllEspeciali
 
 router.post("/especialidades", especialidadController.createEspecialidadAsAdmin);
 router.put("/especialidades/:especialidadId", especialidadController.updateEspecialidadAsAdmin);
-// crear aca endpoint para asignar especialidad a usuario
-// crear aca endpoint para editar especialidad a usuario
-// crear aca endpoint para eliminar especialidad a usuario
 
 router.put("/especialidades/block/:especialidadId", especialidadController.disableEspecialidadAsAdmin);
 router.put("/especialidades/unblock/:especialidadId", especialidadController.enableEspecialidadAsAdmin);
+
+router.post("/profesionalEspecialidad", profesionalEspecialidadController.assignEspecialidadAsAdmin);
+router.delete("/profesionalEspecialidad/:id_asignacion", profesionalEspecialidadController.deleteEspecialidadAsAdmin);
+router.put("/profesionalEspecialidad/:id_asignacion", profesionalEspecialidadController.editAsignacionEspecialidadAsAdmin);
+
+
 
 // --------------------------------------------------------------------------------------------------------------
 // Manejo de empresas

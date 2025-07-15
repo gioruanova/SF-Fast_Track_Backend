@@ -6,18 +6,18 @@ class ProfesionalEspecialidad extends BaseModel {
   }
 
   static get idColumn() {
-    return "id_especialidad"; 
+    return "id_asignacion"; 
   }
 
   static get jsonSchema() {
     return {
       type: "object",
-      required: ["id_usuario", "company_id", "id_especialidad_creada"],
+      required: ["id_usuario", "company_id", "id_especialidad"],
       properties: {
-        id_especialidad: { type: "integer" },
+        id_asignacion: { type: "integer" },
         id_usuario: { type: "integer" },
         company_id: { type: "integer" },
-        id_especialidad_creada: { type: "integer" },
+        id_especialidad: { type: "integer" },
       },
     };
   }
@@ -48,7 +48,7 @@ class ProfesionalEspecialidad extends BaseModel {
         relation: BaseModel.BelongsToOneRelation,
         modelClass: Especialidad,
         join: {
-          from: "profesionales_especialidad.id_especialidad_creada",
+          from: "profesionales_especialidad.id_especialidad",
           to: "especialidades.id_especialidad",
         },
       },

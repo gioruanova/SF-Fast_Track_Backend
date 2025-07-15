@@ -8,6 +8,7 @@ const authUserWithStatus = require("../middlewares/authUserWithStatus");
 const authUserController = require("../controllers/authUserController");
 const userController = require("../controllers/userController");
 const especialidadController = require("../controllers/especialidadController");
+const profesionalEspecialidadController = require("../controllers/profesionalEspecialidadController");
 
 const globalLogController = require("../controllers/globalLogController");
 
@@ -41,12 +42,15 @@ router.get("/especialidades",authUserWithStatus("owner", "operador"),especialida
 
 router.post("/especialidades",authUserWithStatus("owner"),especialidadController.createEspecialidadAsClient);
 router.put("/especialidades/:especialidadId",authUserWithStatus("owner"),especialidadController.updateEspecialidadAsClient);
-// crear aca endpoint para asignar especialidad a usuario
-// crear aca endpoint para editar especialidad a usuario
-// crear aca endpoint para eliminar especialidad a usuario
 
 router.put("/especialidades/block/:especialidadId",authUserWithStatus("owner"),especialidadController.disableEspecialidadAsClient);
 router.put("/especialidades/unblock/:especialidadId",authUserWithStatus("owner"),especialidadController.enableEspecialidadAsClient);
+
+router.post("/profesionalEspecialidad",authUserWithStatus("owner", "operador"), profesionalEspecialidadController.assignEspecialidadAsClient);
+router.delete("/profesionalEspecialidad/:id_asignacion",authUserWithStatus("owner", "operador"), profesionalEspecialidadController.deleteEspecialidadAsClient);
+router.put("/profesionalEspecialidad/:id_asignacion",authUserWithStatus("owner", "operador"), profesionalEspecialidadController.editAsignacionEspecialidadAsClient);
+
+
 
 // --------------------------------------------------------------------------------------------------------------
 // // Manejo de features especiales
