@@ -1,4 +1,3 @@
-// migracion para especialidades
 exports.up = function (knex) {
   return knex.schema.createTable("especialidades", function (table) {
     table.increments("id_especialidad").primary();

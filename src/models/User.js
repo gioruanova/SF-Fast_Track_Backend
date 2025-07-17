@@ -39,6 +39,7 @@ class User extends BaseModel {
 
   static get relationMappings() {
     const Company = require("./Company");
+    const PlatformMessageUser = require("./PlatformMessageUser");
 
     return {
       company: {

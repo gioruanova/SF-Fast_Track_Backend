@@ -1,4 +1,3 @@
-// seeds/01_companies.js
 exports.seed = async function (knex) {
   await knex("companies").del();
   await knex.raw("ALTER TABLE companies AUTO_INCREMENT = 1000");

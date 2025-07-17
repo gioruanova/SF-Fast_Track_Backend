@@ -57,14 +57,15 @@ async function createMessageForCompanyAsAdmin(req, res) {
       platform_message_title,
       platform_message_content,
       message_sender,
-      apto_empresa: true,
+      apto_empresa: false,
       user_id: null,
       company_id,
     });
 
     const users = await User.query()
       .select("user_id")
-      .where("company_id", company_id);
+      .where("company_id", company_id)
+      .andWhere("user_role", "owner");
 
     const entries = users.map((user) => ({
       platform_message_id: message.platform_message_id,
@@ -74,9 +75,7 @@ async function createMessageForCompanyAsAdmin(req, res) {
 
     await knex.batchInsert("platform_messages_users", entries);
 
-    res
-      .status(201)
-      .json({ message: "Mensaje creado para todos los usuarios." });
+    res.status(201).json({ message: "Mensaje creado unicamente para owners." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error creando mensaje para todos." });
@@ -275,15 +274,14 @@ async function deleteCompanyMessagesAsClient(req, res) {
 // ---------------------------------------------------------
 // Borrar  mensaje puntual por usuario
 // ---------------------------------------------------------
-// TODO: Falta testear este endpoint con otro usuario logueado
-// tambien revisar que paso como param para borrarlo. si el id de la tabla o el platform_message_id
+
 async function deleteSpecificMessagesAsClient(req, res) {
   const { specific_message_id } = req.params;
 
   try {
     const validMessage = await PlatformMessageUser.query()
       .where({
-        platform_message_id: specific_message_id,
+        id: specific_message_id,
         user_id: req.user.user_id,
       })
       .first();
@@ -294,7 +292,7 @@ async function deleteSpecificMessagesAsClient(req, res) {
       });
     }
 
-    await PlatformMessageUser.query().deleteById(specific_message_id);
+    await PlatformMessageUser.query().deleteById(validMessage.id);
 
     res.status(200).json({ message: "Mensaje eliminado." });
   } catch (error) {
@@ -306,15 +304,13 @@ async function deleteSpecificMessagesAsClient(req, res) {
 // ---------------------------------------------------------
 // Marcar mensaje como leido
 // ---------------------------------------------------------
-// TODO: Falta testear este endpoint con otro usuario logueado
-// tambien revisar que paso como param para borrarlo. si el id de la tabla o el platform_message_id
 async function marAsReadMessageAsClient(req, res) {
   const { specific_message_id } = req.params;
 
   try {
     const validMessage = await PlatformMessageUser.query()
       .where({
-        platform_message_id: specific_message_id,
+        id: specific_message_id,
         user_id: req.user.user_id,
       })
       .first();
@@ -333,7 +329,7 @@ async function marAsReadMessageAsClient(req, res) {
 
     await PlatformMessageUser.query()
       .where({
-        platform_message_id: specific_message_id,
+        id: specific_message_id,
         user_id: req.user.user_id,
       })
       .update({ is_read: 1 });
@@ -348,15 +344,13 @@ async function marAsReadMessageAsClient(req, res) {
 // ---------------------------------------------------------
 // Marcar mensaje como leido
 // ---------------------------------------------------------
-// TODO: Falta testear este endpoint con otro usuario logueado
-// tambien revisar que paso como param para borrarlo. si el id de la tabla o el platform_message_id
 async function marAsUnreadMessageAsClient(req, res) {
   const { specific_message_id } = req.params;
 
   try {
     const validMessage = await PlatformMessageUser.query()
       .where({
-        platform_message_id: specific_message_id,
+        id: specific_message_id,
         user_id: req.user.user_id,
       })
       .first();
@@ -375,7 +369,7 @@ async function marAsUnreadMessageAsClient(req, res) {
 
     await PlatformMessageUser.query()
       .where({
-        platform_message_id: specific_message_id,
+        id: specific_message_id,
         user_id: req.user.user_id,
       })
       .update({ is_read: 0 });
@@ -390,16 +384,14 @@ async function marAsUnreadMessageAsClient(req, res) {
 // ---------------------------------------------------------
 // Ver todos los mensajes
 // ---------------------------------------------------------
-// TODO: Falta testear este endpoint con otro usuario logueado
-// tambien revisar que paso como param para borrarlo. si el id de la tabla o el platform_message_id
-
 async function getAllMesagesAsClient(req, res) {
   const requestUser = req.user.user_id;
   try {
     const messages = await PlatformMessageUser.query()
       .select("*")
       .where("user_id", requestUser)
-      .orderBy("created_at", "desc").withGraphFetched("platformMessage");
+      .orderBy("created_at", "desc")
+      .withGraphFetched("platformMessage");
 
     return res.json(messages);
   } catch (error) {

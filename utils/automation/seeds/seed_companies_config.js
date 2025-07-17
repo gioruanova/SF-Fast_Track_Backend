@@ -1,4 +1,3 @@
-// seeds/01_companies_config.js
 exports.seed = async function (knex) {
   await knex("companies_config").del();
 

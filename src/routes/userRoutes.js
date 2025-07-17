@@ -32,15 +32,17 @@ router.post("/refresh", authUserController.refreshToken);
 // =======================
 // Rutas protegidas
 // Manejo de company
-router.put("/company",authUserWithStatus("owner"),companyController.updateCompanyAsClient);
+router.get("/company/companyInfo",authUserWithStatus("owner"),companyController.getCompanyInfoAsClientForOnwer);
+router.get("/company/companyStatus",authUserWithStatus("owner"),companyConfigController.getCompanySettingsByClientForOwner);
 router.get("/company/config",authUserWithStatus("owner", "operador", "profesional"),companyConfigController.getCompanySettingsByClient);
+router.put("/company",authUserWithStatus("owner"),companyController.updateCompanyAsClient);
 router.put("/company/config",authUserWithStatus("owner"),companyConfigController.updateCompanySettingsByClient);
 
 // Manejo de users
 router.get("/users",authUserWithStatus("owner", "operador"),userController.getUsersAsClient);
 
 router.post("/users",authUserWithStatus("owner", "operador"),userController.createUserAsClient);
-// TODO: crear aca endpoint para editar usuario con logica de no poder cambiar rol (exigir nueva creacion)
+router.put("/users/:user_id", authUserWithStatus("owner", "operador"),userController.editUserAsClient);
 
 router.post("/users/block/:user_id",authUserWithStatus("owner"),userController.blockUserAsClient);
 router.post("/users/unblock/:user_id",authUserWithStatus("owner"),userController.unblockUserAsClient);

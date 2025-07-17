@@ -1,4 +1,3 @@
-// migracion para profesionales_especialidad
 exports.up = function (knex) {
   return knex.schema.createTable(
     "profesionales_especialidad",

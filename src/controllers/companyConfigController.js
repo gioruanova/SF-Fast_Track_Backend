@@ -16,6 +16,28 @@ async function createCompanyConfigAsAdmin(data) {
 
 // CONTROLADORES PARA CLIENT:
 // ---------------------------------------------------------
+// Get configuración de empresa para Owner
+// ---------------------------------------------------------
+async function getCompanySettingsByClientForOwner(req, res) {
+  const company_id = req.user.company_id;
+
+  try {
+    const companyConfig = await CompaniesConfig.query().findOne({ company_id }).withGraphFetched("company");
+
+    if (!companyConfig) {
+      return res
+        .status(404)
+        .json({ error: "Configuración de empresa no encontrada" });
+    }
+
+    return res.json(companyConfig);
+  } catch (error) {
+    console.error("Error al obtener configuración de empresa:", error);
+    return res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+// ---------------------------------------------------------
+
 // Get configuración de empresa
 // ---------------------------------------------------------
 async function getCompanySettingsByClient(req, res) {
@@ -136,5 +158,6 @@ module.exports = {
   createCompanyConfigAsAdmin,
 
   getCompanySettingsByClient,
+  getCompanySettingsByClientForOwner,
   updateCompanySettingsByClient,
 };

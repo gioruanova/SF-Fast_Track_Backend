@@ -54,7 +54,7 @@ router.get("/users", userController.getUsersAsAdmin);
 router.get("/users/:company_id", userController.getUsersByCompanyAsAdmin);
 
 router.post("/users", userController.createUserAsAdmin);
-// TODO: crear aca endpoint para editar usuario con logica de no poder cambiar rol (exigir nueva creacion)
+router.put("/users/:user_id", userController.editUserAsAdmin);
 
 router.post("/users/block/:user_id", userController.blockUserAsAdmin);
 router.post("/users/unblock/:user_id", userController.unblockUserAsAdmin);

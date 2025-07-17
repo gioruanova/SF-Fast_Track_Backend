@@ -14,12 +14,10 @@ async function loginUser(email, password) {
     .withGraphFetched("company");
 
   if (!user) {
-    // console.log("Usuario no encontrado");
     return null;
   }
 
   if (!user.user_status) {
-    // console.log("Usuario bloqueado");
     return { error: "blocked" };
   }
 

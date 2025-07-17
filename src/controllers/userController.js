@@ -31,9 +31,15 @@ async function createUserAsAdmin(req, res) {
       return res.status(400).json({ error: "No existe empresa bajo ese ID" });
     }
 
-    const existingUser = await User.query().findOne({ user_email });
+    const existingUser = await User.query()
+      .where("user_email", user_email)
+      .orWhere("user_dni", user_dni)
+      .first();
+
     if (existingUser) {
-      return res.status(400).json({ error: "El email ya está registrado" });
+      return res
+        .status(400)
+        .json({ error: "El email o DNI ya está registrado" });
     }
 
     const newUser = await User.query().insert({
@@ -58,6 +64,94 @@ async function createUserAsAdmin(req, res) {
       .status(201)
       .json({ success: true, message: "Usuario creado correctamente" });
   } catch (error) {
+    return res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+// ---------------------------------------------------------
+// Editar Usuario
+// ---------------------------------------------------------
+async function editUserAsAdmin(req, res) {
+  const { user_id } = req.params;
+  const allowedFields = [
+    "user_complete_name",
+    "user_dni",
+    "user_phone",
+    "user_email",
+    "user_password",
+    "user_role",
+    "user_status",
+    "company_id",
+  ];
+
+  try {
+    const user = await User.query().findById(user_id);
+    if (!user)
+      return res.status(400).json({ error: "No existe usuario bajo ese ID" });
+
+    const patchData = {};
+    for (const field of allowedFields) {
+      if (field in req.body) {
+        const val = req.body[field];
+        if (!val || val.toString().trim() === "")
+          return res
+            .status(400)
+            .json({ error: `El campo ${field} no puede estar vacío` });
+        patchData[field] = val;
+      }
+    }
+
+    if (patchData.company_id) {
+      const company = await Company.query().findById(patchData.company_id);
+      if (!company)
+        return res.status(400).json({ error: "No existe empresa bajo ese ID" });
+    }
+
+    if (patchData.user_email) {
+      const exists = await User.query()
+        .where("user_email", patchData.user_email)
+        .whereNot("user_id", user_id)
+        .first();
+      if (exists)
+        return res.status(400).json({ error: "El email ya está registrado" });
+    }
+
+    if (patchData.user_dni) {
+      const exists = await User.query()
+        .where("user_dni", patchData.user_dni)
+        .whereNot("user_id", user_id)
+        .first();
+      if (exists)
+        return res.status(400).json({ error: "El DNI ya está registrado" });
+    }
+
+    if (patchData.user_password) {
+      const same = await bcrypt.compare(
+        patchData.user_password,
+        user.user_password
+      );
+      if (same) delete patchData.user_password;
+      else
+        patchData.user_password = bcrypt.hashSync(
+          patchData.user_password,
+          saltRounds
+        );
+    }
+
+    await User.query().findById(user_id).patch(patchData);
+
+    /*LOGGER*/ await registrarNuevoLog(
+      user.company_id,
+      "El usuario " +
+        user.user_complete_name +
+        " ha sido editado." +
+        " (Ejecutado por Sistema)"
+    );
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Usuario editado correctamente" });
+  } catch (e) {
+    console.error(e);
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -116,7 +210,10 @@ async function blockUserAsAdmin(req, res) {
 
     /*LOGGER*/ await registrarNuevoLog(
       userToBlock.company_id,
-      "El usuario " + userToBlock.user_complete_name + " ha sido bloqueado."  + " (Ejecutado por Sistema)"
+      "El usuario " +
+        userToBlock.user_complete_name +
+        " ha sido bloqueado." +
+        " (Ejecutado por Sistema)"
     );
 
     return res
@@ -147,7 +244,8 @@ async function unblockUserAsAdmin(req, res) {
       userToUnblock.company_id,
       "El usuario " +
         userToUnblock.user_complete_name +
-        " ha sido desbloqueado."  + " (Ejecutado por Sistema)"
+        " ha sido desbloqueado." +
+        " (Ejecutado por Sistema)"
     );
 
     return res
@@ -187,7 +285,8 @@ async function restoreUserAsAdmin(req, res) {
       userToRestore.company_id,
       "El usuario " +
         userToRestore.user_complete_name +
-        " ha sido desbloqueado y la contraseña ha sido reestablecida."  + " (Ejecutado por Sistema)"
+        " ha sido desbloqueado y la contraseña ha sido reestablecida." +
+        " (Ejecutado por Sistema)"
     );
 
     return res
@@ -278,7 +377,12 @@ async function createUserAsClient(req, res) {
 
     /*LOGGER*/ await registrarNuevoLog(
       newUser.company_id,
-      "El usuario " + newUser.user_complete_name + " ha sido creado"+ ". (Ejecutado por " + req.user.user_name + ")."
+      "El usuario " +
+        newUser.user_complete_name +
+        " ha sido creado" +
+        ". (Ejecutado por " +
+        req.user.user_name +
+        ")."
     );
 
     return res
@@ -290,10 +394,145 @@ async function createUserAsClient(req, res) {
 }
 
 // ---------------------------------------------------------
+// Editar usuario
+// ---------------------------------------------------------
+async function editUserAsClient(req, res) {
+  const creator = req.user;
+  const company_id = creator.company_id;
+  let limiteOperadores;
+  let currentTotalOperadores;
+  let limiteProfesionales;
+  let currentTotalProfesionales;
+
+  const { user_id } = req.params;
+
+  const allowedFields = [
+    "user_complete_name",
+    "user_dni",
+    "user_phone",
+    "user_email",
+    "user_password",
+    "user_role",
+    "user_status",
+  ];
+
+  try {
+    const company = await Company.query().findById(company_id);
+    if (!company) {
+      return res.status(400).json({ error: "No existe empresa bajo ese ID" });
+    }
+
+    const user = await User.query()
+      .findById(user_id)
+      .where("company_id", company_id);
+    if (!user)
+      return res.status(400).json({ error: "No existe usuario bajo ese ID" });
+
+    const patchData = {};
+    for (const field of allowedFields) {
+      if (field in req.body) {
+        const val = req.body[field];
+        if (!val || val.toString().trim() === "")
+          return res
+            .status(400)
+            .json({ error: `El campo ${field} no puede estar vacío` });
+        patchData[field] = val;
+      }
+    }
+
+    if (
+      patchData.user_role &&
+      !canCreateRole(creator.user_role, patchData.user_role)
+    ) {
+      return res
+        .status(403)
+        .json({ error: "No tenés permiso para crear este tipo de usuario" });
+    }
+
+    limiteOperadores = await companyController.getLimitOperator(company_id);
+    limiteProfesionales = await companyController.getLimitProfesionales(
+      company_id
+    );
+
+    currentTotalOperadores = await getCurrentTotalOperadores(company_id);
+    currentTotalProfesionales = await getCurrentTotalProfesionales(company_id);
+
+    if (
+      patchData.user_role == "operador" &&
+      currentTotalOperadores >= limiteOperadores
+    ) {
+      return res.status(400).json({ error: "Limite de operadores alcanzado" });
+    }
+
+    if (
+      patchData.user_role == "profesional" &&
+      currentTotalProfesionales >= limiteProfesionales
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Limite de profesionales alcanzado" });
+    }
+
+    if (patchData.user_email) {
+      const exists = await User.query()
+        .where("user_email", patchData.user_email)
+        .whereNot("user_id", user_id)
+        .first();
+      if (exists)
+        return res.status(400).json({ error: "El email ya está registrado" });
+    }
+
+    if (patchData.user_dni) {
+      const exists = await User.query()
+        .where("user_dni", patchData.user_dni)
+        .whereNot("user_id", user_id)
+        .first();
+      if (exists)
+        return res.status(400).json({ error: "El DNI ya está registrado" });
+    }
+
+    if (patchData.user_password) {
+      const same = await bcrypt.compare(
+        patchData.user_password,
+        user.user_password
+      );
+      if (same) delete patchData.user_password;
+      else
+        patchData.user_password = bcrypt.hashSync(
+          patchData.user_password,
+          saltRounds
+        );
+    }
+
+    await User.query().findById(user_id).patch(patchData);
+
+    /*LOGGER*/ await registrarNuevoLog(
+      user.company_id,
+      "El usuario " +
+        user.user_complete_name +
+        " ha sido editado." +
+        " (Ejecutado por " +
+        creator.user_name +
+        ")."
+    );
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Usuario editado correctamente" });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+
+// ---------------------------------------------------------
 // Obtener todos lo suaurios
 // ---------------------------------------------------------
 async function getUsersAsClient(req, res) {
   const companyId = req.user.company_id;
+  
+  
+  
 
   try {
     const users = await User.query()
@@ -357,7 +596,12 @@ async function blockUserAsClient(req, res) {
 
     /*LOGGER*/ await registrarNuevoLog(
       userToBlock.company_id,
-      "El usuario " + userToBlock.user_complete_name + " ha sido bloqueado."+ ". (Ejecutado por " + req.user.user_name + ")."
+      "El usuario " +
+        userToBlock.user_complete_name +
+        " ha sido bloqueado." +
+        ". (Ejecutado por " +
+        req.user.user_name +
+        ")."
     );
 
     return res
@@ -404,7 +648,12 @@ async function unblockUserAsClient(req, res) {
 
     /*LOGGER*/ await registrarNuevoLog(
       userToUnblock.company_id,
-      "El usuario " + userToUnblock.user_complete_name + " ha sido bloqueado."+ ". (Ejecutado por " + req.user.user_name + ")."
+      "El usuario " +
+        userToUnblock.user_complete_name +
+        " ha sido bloqueado." +
+        ". (Ejecutado por " +
+        req.user.user_name +
+        ")."
     );
 
     return res
@@ -455,7 +704,10 @@ async function restoreUserAsClient(req, res) {
       userToRestore.company_id,
       "El usuario " +
         userToRestore.user_complete_name +
-        " ha sido desbloqueado y la contraseña ha sido reestablecida."+ ". (Ejecutado por " + req.user.user_name + ")."
+        " ha sido desbloqueado y la contraseña ha sido reestablecida." +
+        ". (Ejecutado por " +
+        req.user.user_name +
+        ")."
     );
 
     return res
@@ -542,12 +794,14 @@ module.exports = {
   getUsersAsAdmin,
   getUsersByCompanyAsAdmin,
   createUserAsAdmin,
+  editUserAsAdmin,
   blockUserAsAdmin,
   unblockUserAsAdmin,
   restoreUserAsAdmin,
 
   getUsersAsClient,
   createUserAsClient,
+  editUserAsClient,
   blockUserAsClient,
   unblockUserAsClient,
   restoreUserAsClient,

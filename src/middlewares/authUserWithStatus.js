@@ -29,7 +29,6 @@ function authUserWithStatus(...allowedRoles) {
       const { company_id, user_id } = req.user;
 
       // check del estado de la empresa
-      // TODO: tengo que armar un endpoint donde se verifique el estado de la empresa y muestre la info en algun banner para avisarles de la situacion
       const company = await Company.query().findById(company_id);
       if (!company || company.company_estado !== 1) {
         return res

@@ -57,10 +57,12 @@ async function updateCompanyAsAdmin(req, res) {
       updateData
     );
 
+    console.log(updatedCompany.company_id);
+
     /*LOGGER*/ await registrarNuevoLog(
-      updatedCompany.id_company,
+      company.company_id,
       "La empresa " +
-        updatedCompany.company_nombre +
+        company.company_nombre +
         " se ha editado con exito. " +
         " (Ejecutado por Sistema)."
     );
@@ -120,8 +122,9 @@ async function createCompany(req, res) {
       company_nombre,
       company_phone,
       company_email,
-      limite_operadores,
-      limite_profesionales,
+      limite_operadores: 3,
+      limite_especialidades: 10,
+      limite_profesionales: 10,
       reminder_manual: false, // funcionalidad a evaluar si se cobra o no
       company_estado: false, // inactiva por defecto
     });
@@ -133,7 +136,7 @@ async function createCompany(req, res) {
     await companyConfigController.createCompanyConfigAsAdmin(newConfigData);
 
     /*LOGGER*/ await registrarNuevoLog(
-      newCompany.id_company,
+      newCompany.company_id,
       "La empresa " +
         newCompany.company_nombre +
         " se ha creado con exito. " +
@@ -150,6 +153,22 @@ async function createCompany(req, res) {
 }
 
 // CONTROLADORES PARA CLIENT:
+// ---------------------------------------------------------
+// Get company info
+// ---------------------------------------------------------
+async function getCompanyInfoAsClientForOnwer(req, res) {
+  try {
+    const company_id = req.user.company_id;
+    const company = await Company.query().findById(company_id);
+    if (!company) {
+      return res.status(404).json({ error: "Empresa no encontrada" });
+    }
+    return res.json(company);
+  } catch (error) {
+    console.error("Error al obtener información de empresa:", error);
+    return res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
 // ---------------------------------------------------------
 // Update Company
 // ---------------------------------------------------------
@@ -251,6 +270,7 @@ module.exports = {
   updateCompanyAsAdmin,
   createCompany,
 
+  getCompanyInfoAsClientForOnwer,
   updateCompanyAsClient,
 
   // Helpers
