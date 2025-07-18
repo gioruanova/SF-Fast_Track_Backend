@@ -13,6 +13,8 @@ const companyConfigController = require("../controllers/companyConfigController"
 const especialidadController = require("../controllers/especialidadController");
 const profesionalEspecialidadController = require("../controllers/profesionalEspecialidadController");
 
+const clientesRecurrentesController = require("../controllers/clientesRecurrentesController");
+
 const globalLogController = require("../controllers/globalLogController");
 const publicMEssageController = require("../controllers/cfv/publicMessagesController");
 const messageController = require("../controllers/messageController");
@@ -60,6 +62,10 @@ router.post("/profesionalEspecialidad",authUserWithStatus("owner", "operador"), 
 router.delete("/profesionalEspecialidad/:id_asignacion",authUserWithStatus("owner", "operador"), profesionalEspecialidadController.deleteEspecialidadAsClient);
 router.put("/profesionalEspecialidad/:id_asignacion",authUserWithStatus("owner", "operador"), profesionalEspecialidadController.editAsignacionEspecialidadAsClient);
 
+
+// Manejo de clientes recurrentes
+router.get("/clientes-recurrentes",authUserWithStatus("owner", "operador"),clientesRecurrentesController.getAllClientesRecurrentesAsClient);
+router.post("/clientes-recurrentes",authUserWithStatus("owner", "operador"),clientesRecurrentesController.createClienteRecurrenteAsClient);
 
 // --------------------------------------------------------------------------------------------------------------
 // Manejo de Logs

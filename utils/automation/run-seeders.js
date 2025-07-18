@@ -23,6 +23,7 @@ const seeders = [
   "seed_users.js",
   "seed_especialidades.js",
   "seed_messages_categories.js",
+  "seed_clientes-recurrentes.js",
 ];
 
 async function runSeeders() {

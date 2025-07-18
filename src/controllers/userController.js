@@ -819,7 +819,6 @@ async function getProfesionalesDetailAsClient(req, res) {
   try {
     const companyId = req.user.company_id;
     const data = await fetchProfesionalesDetail(companyId);
-    console.log(data);
 
     res.json(data);
   } catch (error) {
