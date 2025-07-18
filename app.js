@@ -14,7 +14,15 @@ const swaggerUI = require("swagger-ui-express");
 const swaggerSpec = require("./utils/swagger/swaggerConfig");
 
 const app = express();
-const port = process.env.PORT || 8888;
+const port = process.env.PORT;
+if (!port) {
+  console.error("❌ Error: PORT variable is not set");
+  process.exit(1); // Sale para que no haya confusión
+}
+
+app.listen(port, "0.0.0.0", () => {
+  console.log(`✅ Server running on port ${port}`);
+});
 
 const corsOptions = {
   origin: [process.env.BACK_TEST_SITE, process.env.BACK_TEST_SITE_2],
