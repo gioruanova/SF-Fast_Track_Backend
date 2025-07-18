@@ -79,7 +79,10 @@ router.put("/profesionalEspecialidad/:id_asignacion", profesionalEspecialidadCon
 
 // --------------------------------------------------------------------------------------------------------------
 // Manejo de empresas
-router.get("/companies", companyController.getAllCompanies);
+router.get("/companies", (req, res, next) => {
+  console.log("GET /super/companies called");
+  next();
+}, companyController.getAllCompanies);
 router.post("/companies/:company_id", companyController.getCompanyById);
 
 router.post("/companies", companyController.createCompany);
