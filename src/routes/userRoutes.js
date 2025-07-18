@@ -83,14 +83,13 @@ router.delete("/platform/single-message/:specific_message_id",authUserWithStatus
 router.put('/platform/message/read/:specific_message_id',authUserWithStatus("owner", "operador", "profesional"), messageController.marAsReadMessageAsClient);
 router.put('/platform/message/unread/:specific_message_id',authUserWithStatus("owner", "operador", "profesional"), messageController.marAsUnreadMessageAsClient);
 
-
-// VISTAS
-router.get("/profesionales/vistas",authUserWithStatus("owner", "operador"),exportProfesionalesController.exportProfesionalesToExcel);
-
-
-
 // --------------------------------------------------------------------------------------------------------------
-// // Manejo de features especiales
+// Manejo de features especiales
+// VISTAS
+router.get("/vistas/profesionales",authUserWithStatus("owner", "operador"),exportProfesionalesController.exportProfesionalesToExcel);
+
+
+
 
 
 module.exports = router;
