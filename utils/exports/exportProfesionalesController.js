@@ -1,7 +1,5 @@
 const { exportToExcel } = require("./exportConfig");
-const {
-  fetchProfesionalesDetail,
-} = require("../../src/controllers/userController");
+const { fetchProfesionalesDetail} = require("../../src/controllers/userController");
 const companyConfigController = require("../../src/controllers/companyConfigController");
 
 async function exportProfesionalesToExcel(req, res) {
