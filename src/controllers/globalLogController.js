@@ -11,7 +11,7 @@ async function registrarNuevoLog(company_id, log_detalle) {
       log_leido: false,
     });
   } catch (error) {
-    console.error("Error al registrar log:", error);
+    throw error;
   }
 }
 
@@ -27,7 +27,6 @@ async function getAllLogsAsClient(req, res) {
       .where("log_company_id", company_id);
     res.json(logs);
   } catch (error) {
-    console.error("Error al obtener logs:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -43,7 +42,6 @@ async function markAllLogsAsReadAsClient(req, res) {
       .where("log_company_id", company_id);
     res.json({ message: "Logs marcados como leídos" });
   } catch (error) {
-    console.error("Error al marcar logs como leídos:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -59,7 +57,6 @@ async function markAllLogsAsUnreadAsClient(req, res) {
       .where("log_company_id", company_id);
     res.json({ message: "Logs marcados como no leídos" });
   } catch (error) {
-    console.error("Error al marcar logs como no leídos:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -73,7 +70,6 @@ async function deleteLogsAsClient(req, res) {
     await LogGlobal.query().delete().where("log_company_id", company_id);
     res.json({ message: "Logs eliminados" });
   } catch (error) {
-    console.error("Error al eliminar logs:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -89,7 +85,6 @@ async function getAllLogsAsAdmin(req, res) {
     const logs = await LogGlobal.query().select("*");
     res.json(logs);
   } catch (error) {
-    console.error("Error al obtener logs:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -104,7 +99,6 @@ async function getAllLogsByCompanyAsAdmin(req, res) {
       .where("log_company_id", req.params.company_id);
     res.json(logs);
   } catch (error) {
-    console.error("Error al obtener logs:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 }

@@ -16,7 +16,6 @@ async function login(req, res) {
 
     return res.json(result);
   } catch (error) {
-    console.error("Error login user:", error);
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -35,7 +34,6 @@ function refreshToken(req, res) {
 
     return res.json({ accessToken: newAccessToken });
   } catch (error) {
-    console.error("Error refresh user token:", error);
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }

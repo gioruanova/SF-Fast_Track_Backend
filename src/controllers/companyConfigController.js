@@ -10,7 +10,7 @@ async function createCompanyConfigAsAdmin(data) {
     const companyConfig = await CompaniesConfig.query().insert(data);
     return companyConfig;
   } catch (error) {
-    console.error("Error al crear configuración de empresa:", error);
+    throw error;
   }
 }
 
@@ -32,7 +32,6 @@ async function getCompanySettingsByClientForOwner(req, res) {
 
     return res.json(companyConfig);
   } catch (error) {
-    console.error("Error al obtener configuración de empresa:", error);
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -54,7 +53,6 @@ async function getCompanySettingsByClient(req, res) {
 
     return res.json(companyConfig);
   } catch (error) {
-    console.error("Error al obtener configuración de empresa:", error);
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -132,7 +130,6 @@ async function updateCompanySettingsByClient(req, res) {
       .status(200)
       .json({ success: true, message: "Configuración actualizada." });
   } catch (error) {
-    console.error("Error actualizando configuración:", error);
     res.status(500).json({ error: "Error interno del servidor." });
   }
 }

@@ -151,7 +151,6 @@ async function editUserAsAdmin(req, res) {
       .status(200)
       .json({ success: true, message: "Usuario editado correctamente" });
   } catch (e) {
-    console.error(e);
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -520,7 +519,6 @@ async function editUserAsClient(req, res) {
       .status(200)
       .json({ success: true, message: "Usuario editado correctamente" });
   } catch (e) {
-    console.error(e);
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }

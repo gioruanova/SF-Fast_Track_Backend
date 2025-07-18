@@ -58,7 +58,6 @@ async function exportUsersByCompany(req, res) {
     return res.end();
 
   } catch (error) {
-    console.error("Error exportando usuarios:", error);
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }

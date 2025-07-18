@@ -9,7 +9,7 @@ async function getAllMessagesCategoriesAsAdmin(req, res) {
     const categories = await PublicMessageCategory.query().select("*");
     return res.json(categories);
   } catch (error) {
-    console.error(error);
+     
     return res.status(500).json({ error: "Error al obtener las categorias" });
   }
 }
@@ -34,7 +34,7 @@ async function createMessageCategoryAsAdmin(req, res) {
     });
     return res.status(200).json(newCategory);
   } catch (error) {
-    console.error(error);
+     
     return res.status(500).json({ error: "Error al crear la categoria" });
   }
 }
@@ -78,7 +78,7 @@ async function updateMessageCategoryAsAdmin(req, res) {
       .status(200)
       .json({ success: true, message: "Categoría editada correctamente." });
   } catch (error) {
-    console.error(error);
+     
     return res.status(500).json({ error: "Error al editar la categoría" });
   }
 }
@@ -108,7 +108,7 @@ async function disableMessageCategoryAsAdmin(req, res) {
       .status(200)
       .json({ success: true, message: "Categoría desactivada correctamente." });
   } catch (error) {
-    console.error(error);
+     
     return res.status(500).json({ error: "Error al desactivar la categoría" });
   }
 }
@@ -138,7 +138,7 @@ async function enableMessageCategoryAsAdmin(req, res) {
       .status(200)
       .json({ success: true, message: "Categoría reactivada correctamente." });
   } catch (error) {
-    console.error(error);
+     
     return res.status(500).json({ error: "Error al reactivar la categoría" });
   }
 }
@@ -158,7 +158,7 @@ async function deleteCategoryMessageAsAdmin(req, res) {
       .status(200)
       .json({ success: true, message: "Categoría eliminada correctamente." });
   } catch (error) {
-    console.error(error);
+     
     return res.status(500).json({ error: "Error al eliminar la categoría" });
   }
 }

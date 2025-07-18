@@ -37,7 +37,7 @@ async function createPublicMessage(req, res) {
       .status(201)
       .json({ success: true, message: "Mensaje creado correctamente" });
   } catch (error) {
-    console.error(error);
+     
     return res.status(500).json({ error: "Error al crear el mensaje" });
   }
 }
@@ -73,7 +73,7 @@ async function createFeedbackMessage(req, res) {
       .status(201)
       .json({ success: true, message: "Feedback correctamente" });
   } catch (error) {
-    console.error(error);
+     
     return res.status(500).json({ error: "Error al crear el mensaje" });
   }
 }
@@ -99,7 +99,7 @@ async function gettAlMessagesAsAdmin(req, res) {
 
     return res.json(result);
   } catch (error) {
-    console.error(error);
+     
     return res.status(500).json({ error: "Error al obtener los mensajes" });
   }
 }
@@ -125,7 +125,7 @@ async function markMessageAsReadAsAdmin(req, res) {
       .status(200)
       .json({ success: true, message: "Mensaje marcado como leído" });
   } catch (error) {
-    console.error(error);
+     
     return res
       .status(500)
       .json({ error: "Error al marcar el mensaje como leído" });
@@ -153,7 +153,7 @@ async function markMessageAsUnreadAsAdmin(req, res) {
       .status(200)
       .json({ success: true, message: "Mensaje marcado como no leído" });
   } catch (error) {
-    console.error(error);
+     
     return res
       .status(500)
       .json({ error: "Error al marcar el mensaje como leído" });
@@ -177,7 +177,7 @@ async function deleteMessageAsAdmin(req, res) {
       .status(200)
       .json({ success: true, message: "Mensaje eliminado correctamente" });
   } catch (error) {
-    console.error(error);
+     
     return res.status(500).json({ error: "Error al eliminar el mensaje" });
   }
 }

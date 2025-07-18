@@ -14,7 +14,6 @@ async function getAllCompanies(req, res) {
       .withGraphFetched("users.especialidades.Especialidad");
     return res.json(companies);
   } catch (error) {
-    console.error("Error al obtener empresas:", error);
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -34,7 +33,6 @@ async function getCompanyById(req, res) {
 
     return res.status(200).json(company);
   } catch (error) {
-    console.error("Error al obtener empresa:", error);
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -66,9 +64,8 @@ async function updateCompanyAsAdmin(req, res) {
         " (Ejecutado por Sistema)."
     );
 
-    return res.json(updatedCompany);
+    return res.json({ success: true, message: "Empresa actualizada exitosamente" });
   } catch (error) {
-    console.error("Error al actualizar empresa:", error);
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -146,7 +143,6 @@ async function createCompany(req, res) {
       .status(201)
       .json({ success: true, message: "Empresa creada exitosamente" });
   } catch (error) {
-    console.error("Error al crear empresa:", error);
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -164,7 +160,6 @@ async function getCompanyInfoAsClientForOnwer(req, res) {
     }
     return res.json(company);
   } catch (error) {
-    console.error("Error al obtener información de empresa:", error);
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -225,7 +220,6 @@ async function updateCompanyAsClient(req, res) {
       message: "Empresa actualizada exitosamente",
     });
   } catch (error) {
-    console.error("Error al actualizar empresa:", error);
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }
@@ -238,7 +232,6 @@ async function getLimitOperator(company_id) {
     const company = await Company.query().findById(company_id);
     return company?.limite_operadores || 0;
   } catch (error) {
-    console.error("Error al obtener el límite de operadores:", error);
     throw error;
   }
 }
@@ -248,7 +241,6 @@ async function getLimitProfesionales(company_id) {
     const company = await Company.query().findById(company_id);
     return company?.limite_profesionales || 0;
   } catch (error) {
-    console.error("Error al obtener el límite de profesionales:", error);
     throw error;
   }
 }
@@ -258,7 +250,6 @@ async function getLimitEspecialidades(company_id) {
     const company = await Company.query().findById(company_id);
     return company?.limite_especialidades || 0;
   } catch (error) {
-    console.error("Error al obtener el límite de especialidades:", error);
     throw error;
   }
 }

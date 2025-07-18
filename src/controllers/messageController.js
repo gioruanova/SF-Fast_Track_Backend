@@ -40,7 +40,6 @@ async function createMessageForAllAsAdmin(req, res) {
       .status(201)
       .json({ message: "Mensaje creado para todos los usuarios." });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "Error creando mensaje para todos." });
   }
 }
@@ -77,7 +76,7 @@ async function createMessageForCompanyAsAdmin(req, res) {
 
     res.status(201).json({ message: "Mensaje creado unicamente para owners." });
   } catch (error) {
-    console.error(error);
+     
     res.status(500).json({ error: "Error creando mensaje para todos." });
   }
 }
@@ -114,7 +113,7 @@ async function createMessageForUserAsAdmin(req, res) {
 
     res.status(201).json({ message: "Mensaje creado para el usuario." });
   } catch (error) {
-    console.error(error);
+     
     res.status(500).json({ error: "Error creando mensaje para el usuario." });
   }
 }
@@ -140,7 +139,7 @@ async function deleteMessageAsAdmin(req, res) {
 
     res.status(200).json({ message: "Mensaje eliminado." });
   } catch (error) {
-    console.error(error);
+     
     res.status(500).json({ error: "Error al eliminar mensaje." });
   }
 }
@@ -187,7 +186,7 @@ async function createMessageForCompanyAsClient(req, res) {
       .status(201)
       .json({ message: "Mensaje creado para todos los usuarios." });
   } catch (error) {
-    console.error(error);
+     
     res.status(500).json({ error: "Error creando mensaje para todos." });
   }
 }
@@ -231,7 +230,7 @@ async function createMessageForUserAsClient(req, res) {
 
     res.status(201).json({ message: "Mensaje creado para el usuario." });
   } catch (error) {
-    console.error(error);
+     
     res.status(500).json({ error: "Error creando mensaje para el usuario." });
   }
 }
@@ -266,7 +265,7 @@ async function deleteCompanyMessagesAsClient(req, res) {
 
     res.status(200).json({ message: "Mensaje eliminado." });
   } catch (error) {
-    console.error(error);
+     
     res.status(500).json({ error: "Error al eliminar mensaje." });
   }
 }
@@ -296,7 +295,7 @@ async function deleteSpecificMessagesAsClient(req, res) {
 
     res.status(200).json({ message: "Mensaje eliminado." });
   } catch (error) {
-    console.error(error);
+     
     res.status(500).json({ error: "Error al eliminar mensaje." });
   }
 }
@@ -336,7 +335,7 @@ async function marAsReadMessageAsClient(req, res) {
 
     res.status(200).json({ message: "Mensaje marcado como leido." });
   } catch (error) {
-    console.error(error);
+     
     res.status(500).json({ error: "Error al marcando mensaje como leido." });
   }
 }
@@ -376,7 +375,7 @@ async function marAsUnreadMessageAsClient(req, res) {
 
     res.status(200).json({ message: "Mensaje marcado como no leido." });
   } catch (error) {
-    console.error(error);
+     
     res.status(500).json({ error: "Error al marcando mensaje como no leido." });
   }
 }
@@ -395,7 +394,7 @@ async function getAllMesagesAsClient(req, res) {
 
     return res.json(messages);
   } catch (error) {
-    console.error(error);
+     
     res.status(500).json({ error: "Error al obtener los mensajes" });
   }
 }
