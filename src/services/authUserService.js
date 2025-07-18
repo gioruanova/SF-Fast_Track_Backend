@@ -3,7 +3,7 @@ const User = require("../models/User");
 
 const { generateTokens, refreshAccessToken } = require("./tokenService");
 
-const userLogController = require("../controllers/userLogController");
+const userLogController = require("../controllers/UserLogController");
 const userController = require("../controllers/userController");
 
 const {registrarNuevoLog} = require("../controllers/globalLogController");
