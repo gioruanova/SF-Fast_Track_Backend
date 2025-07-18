@@ -22,22 +22,11 @@ const corsOptions = {
   allowedHeaders: "Content-Type",
 };
 
-// =====================================================================
 // Middleware
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// =====================================================================
-// Running
-console.log("✅ About to start server...");
-
-app.listen(port, "0.0.0.0", () => {
-  console.log(`✅ Server running on http://localhost:${port}`);
-});
-
-
-// =====================================================================
 // Routes
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 app.use("/public", require("./src/routes/publicRoutes"));
@@ -48,7 +37,6 @@ app.get("/ping", (req, res) => {
   res.send("pong");
 });
 
-// =====================================================================
 // 404 fallback
 app.use((req, res) => {
   res.status(404).send(`
@@ -59,3 +47,8 @@ app.use((req, res) => {
   `);
 });
 
+// Start server - al final
+console.log("✅ About to start server...");
+app.listen(port, "0.0.0.0", () => {
+  console.log(`✅ Server running on port ${port}`);
+});
