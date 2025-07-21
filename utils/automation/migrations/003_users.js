@@ -9,6 +9,7 @@ exports.up = function (knex) {
       table.text("user_password").notNullable();
       table.string("user_role").notNullable();
       table.boolean("user_status").notNullable().defaultTo(true);
+      table.boolean("apto_recibir").notNullable().defaultTo(true);
 
       table.integer("company_id").unsigned().nullable();
       table

@@ -30,6 +30,7 @@ class User extends BaseModel {
         user_password: { type: "string" },
         user_role: { type: "string", maxLength: 50 },
         user_status: { type: "boolean", default: true },
+        apto_recibir: { type: "boolean", default: true },
         company_id: { type: ["integer", "null"] },
         created_at: { type: "string", format: "date-time" },
         updated_at: { type: "string", format: "date-time" },

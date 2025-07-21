@@ -713,6 +713,56 @@ async function restoreUserAsClient(req, res) {
   }
 }
 
+// CONTROLADORES PARA PROFESIONAL
+// ---------------------------------------------------------
+// HABILITAR RECIBIR TRABAJO
+// ---------------------------------------------------------
+async function enableReceiveWork(req, res) {
+  const user_id = req.user.user_id;
+
+  try {
+    const userAvailableWork = await User.query().findById(user_id);
+    console.log(userAvailableWork);
+
+    if (userAvailableWork.apto_recibir === 1) {
+      return res.status(400).json({
+        error: "El profesional ya estaba habilitado para recibir trabajos",
+      });
+    }
+
+    await User.query().findById(user_id).patch({ apto_recibir: true });
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Recibir trabajo habilitado" });
+  } catch (error) {
+    return res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+// DESHABILITAR RECIBIR TRABAJO
+// ---------------------------------------------------------
+async function disableReceiveWork(req, res) {
+  const user_id = req.user.user_id;
+
+  try {
+    const userAvailableWork = await User.query().findById(user_id);
+
+    if (userAvailableWork.apto_recibir === 0) {
+      return res.status(400).json({
+        error: "El profesional ya estaba deshabilitado para recibir trabajos",
+      });
+    }
+
+    await User.query().findById(user_id).patch({ apto_recibir: false });
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Recibir trabajo deshabilitado" });
+  } catch (error) {
+    return res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+
 // ---------------------------------------------------------
 // HELPERS
 // ---------------------------------------------------------
@@ -841,6 +891,9 @@ module.exports = {
   blockUserAsClient,
   unblockUserAsClient,
   restoreUserAsClient,
+
+  enableReceiveWork,
+  disableReceiveWork,
 
   // metodos auxiliares
   bloquearUsuarioPorId,

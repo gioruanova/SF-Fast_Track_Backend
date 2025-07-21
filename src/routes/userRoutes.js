@@ -13,7 +13,10 @@ const companyConfigController = require("../controllers/companyConfigController"
 const especialidadController = require("../controllers/especialidadController");
 const profesionalEspecialidadController = require("../controllers/profesionalEspecialidadController");
 
+const reclamoController = require("../controllers/reclamoController");
 const clientesRecurrentesController = require("../controllers/clientesRecurrentesController");
+const agendaBloquedaController = require("../controllers/agendaBloquedaController");
+const disponibilidadController = require("../controllers/disponibilidadController");
 
 const globalLogController = require("../controllers/globalLogController");
 const publicMEssageController = require("../controllers/cfv/publicMessagesController");
@@ -66,6 +69,27 @@ router.put("/profesionalEspecialidad/:id_asignacion",authUserWithStatus("owner",
 // Manejo de clientes recurrentes
 router.get("/clientes-recurrentes",authUserWithStatus("owner", "operador"),clientesRecurrentesController.getAllClientesRecurrentesAsClient);
 router.post("/clientes-recurrentes",authUserWithStatus("owner", "operador"),clientesRecurrentesController.createClienteRecurrenteAsClient);
+
+
+// Bloqueo de horarios en agenda
+router.get("/agenda",authUserWithStatus("owner", "operador"),agendaBloquedaController.getAllAgendaBloqueadaAsClient);
+router.post("/agendaBloqueada/:user_id",authUserWithStatus("owner", "operador"),disponibilidadController.getDisponibilidadBloqueadaByProfesioanlAsAdmin);
+router.post("/agenda/:user_id",authUserWithStatus("owner", "operador"),agendaBloquedaController.createAgendaBloqueadaAsClient);
+
+// Reclamos
+router.post("/reclamo",authUserWithStatus("owner", "operador"),reclamoController.createReclamo);
+router.get("/reclamos", authUserWithStatus("owner", "operador"),reclamoController.getReclamosAsClient);
+
+
+// bloqueo manual de agenda
+router.post("/profesional/agenda",authUserWithStatus("profesional"),agendaBloquedaController.createAgendaBloqueadaAsProfesional);
+router.get("/agenda/vista/profesional",authUserWithStatus("owner", "operador"),agendaBloquedaController.getAllAgendaBloqueadaAsProfesional);
+
+// deshabilita/habilita la poisibilidad de recibir trabajo
+router.put("/workload/enable",authUserWithStatus("profesional"),userController.enableReceiveWork);
+router.put("/workload/disable",authUserWithStatus("profesional"),userController.disableReceiveWork);
+
+
 
 // --------------------------------------------------------------------------------------------------------------
 // Manejo de Logs

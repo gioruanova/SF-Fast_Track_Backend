@@ -12,13 +12,14 @@ class CompaniesConfig extends BaseModel {
   static get jsonSchema() {
     return {
       type: "object",
-      required: ["company_id", "requiere_domicilio", "requiere_url"],
+      required: ["company_id", "requiere_domicilio", "requiere_url", "requiere_fecha_final"],
 
       properties: {
         company_config_id: { type: "integer" },
         company_id: { type: "integer" },
         requiere_domicilio: { type: "boolean", default: true },
         requiere_url: { type: "boolean", default: false },
+        requiere_fecha_final: { type: "boolean", default: false },
 
         sing_heading_owner: { type: "string", default: "Owner" },
         plu_heading_owner: { type: "string", default: "Owners" },

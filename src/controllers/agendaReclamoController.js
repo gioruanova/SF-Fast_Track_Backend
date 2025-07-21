@@ -1,0 +1,1 @@
+const AgendaReclamo = require("../models/AgendaReclamo");

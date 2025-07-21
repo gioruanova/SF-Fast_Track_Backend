@@ -14,6 +14,7 @@ exports.up = function (knex) {
     // Configuración general
     table.boolean("requiere_domicilio").notNullable().defaultTo(true);
     table.boolean("requiere_url").notNullable().defaultTo(false);
+    table.boolean("requiere_fecha_final").notNullable().defaultTo(false);
 
     // Headings: singular y plural
     table.string("sing_heading_owner").notNullable().defaultTo("Owner");

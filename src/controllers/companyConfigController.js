@@ -104,7 +104,11 @@ async function updateCompanySettingsByClient(req, res) {
     }
   });
 
-  const otherFields = ["requiere_domicilio", "requiere_url"];
+  const otherFields = [
+    "requiere_domicilio",
+    "requiere_url",
+    "requiere_fecha_final",
+  ];
 
   otherFields.forEach((field) => {
     if (field in data) {
