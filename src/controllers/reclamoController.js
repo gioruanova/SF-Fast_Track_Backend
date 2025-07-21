@@ -11,6 +11,36 @@ const companyConfigController = require("./companyConfigController");
 const { registrarNuevoLog } = require("../controllers/globalLogController");
 const { update } = require("../db/knex");
 
+// CONTROLADORES PARA ADMIN:
+// ---------------------------------------------------------
+// Obtener reclamos as ADMIN
+// ---------------------------------------------------------
+async function getReclamosAsAdmin(req, res) {
+  try {
+    const companyId = req.user.company_id;
+
+    const resultado = await fetchReclamosByCompanyId();
+
+    res.json(resultado);
+  } catch (error) {
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+// ---------------------------------------------------------
+// Obtener reclamos por empresa as ADMIN
+// ---------------------------------------------------------
+async function getReclamosByCompanyAsAdmin(req, res) {
+  try {
+    const companyId = req.params.company_id;
+
+    const resultado = await fetchReclamosByCompanyId(companyId);
+
+    res.json(resultado);
+  } catch (error) {
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+
 // CONTROLADORES PARA CLIENT:
 // ---------------------------------------------------------
 // Crear reclamo
@@ -273,7 +303,6 @@ async function updateReclamoAsProfesional(req, res) {
         reclamo_nota_cierre,
         reclamo_presupuesto,
         reclamo_estado,
-        
       }
     );
 
@@ -383,29 +412,33 @@ function validarHorario(data, companyConfig) {
   return { valid: true };
 }
 
-async function fetchReclamosByCompanyId(company_id, _user_id) {
+async function fetchReclamosByCompanyId(_company_id, _user_id) {
   const reclamos = await Reclamo.query()
-    .where("company_id", company_id)
+    .modify((qb) => {
+      if (_company_id) {
+        qb.andWhere("company_id", _company_id);
+      }
+    })
     .modify((qb) => {
       if (_user_id) {
         qb.andWhere("profesional_id", _user_id);
       }
     })
     .withGraphFetched(
-      "[especialidad, creador, cliente, profesional, agendaReclamo]"
+      "[especialidad, creador, cliente, profesional, agendaReclamo, company]"
     );
 
   return reclamos.map((r) => ({
-    reclamo_id: r.reclamo_id,
-    nombre_especialidad: r.especialidad?.nombre_especialidad || null,
-    reclamo_titulo: r.reclamo_titulo,
-    reclamo_detalle: r.reclamo_detalle,
+    company_id: r.company?.company_id,
+    company_name: r.company?.company_nombre,
 
+    reclamo_id: r.reclamo_id,
+    created_at: r.created_at,
     creador: r.creador?.user_complete_name || null,
 
-    agenda_fecha: r.agendaReclamo?.agenda_fecha,
-    agenda_hora_desde: r.agendaReclamo?.agenda_hora_desde,
-    agenda_hora_hasta: r.agendaReclamo?.agenda_hora_hasta,
+    reclamo_titulo: r.reclamo_titulo,
+    reclamo_detalle: r.reclamo_detalle,
+    nombre_especialidad: r.especialidad?.nombre_especialidad || null,
 
     cliente_id: r.cliente?.cliente_id,
     cliente_complete_name: r.cliente?.cliente_complete_name,
@@ -418,11 +451,13 @@ async function fetchReclamosByCompanyId(company_id, _user_id) {
     reclamo_url: r.reclamo_url,
     profesional: r.profesional?.user_complete_name || null,
 
+    agenda_fecha: r.agendaReclamo?.agenda_fecha,
+    agenda_hora_desde: r.agendaReclamo?.agenda_hora_desde,
+    agenda_hora_hasta: r.agendaReclamo?.agenda_hora_hasta,
+
     reclamo_estado: r.reclamo_estado,
     reclamo_nota_cierre: r.reclamo_nota_cierre,
     reclamo_presupuesto: r.reclamo_presupuesto,
-
-    created_at: r.created_at,
     updated_at: r.updated_at,
   }));
 }
@@ -475,6 +510,9 @@ async function simulacionEnvioEmailReclamoActualizacion(reclamo) {
 }
 
 module.exports = {
+  getReclamosAsAdmin,
+  getReclamosByCompanyAsAdmin,
+
   createReclamo,
   getReclamosAsClient,
   getReclamosAsClientById,

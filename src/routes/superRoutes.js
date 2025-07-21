@@ -14,6 +14,9 @@ const profesionalEspecialidadController = require("../controllers/profesionalEsp
 const publicMessagesController = require("../controllers/cfv/publicMessagesController");
 const publicMessageCategoryController = require("../controllers/cfv/publicMessageCategoryController");
 
+const reclamoController = require("../controllers/reclamoController");
+
+
 const globalLogController = require("../controllers/globalLogController");
 const messageController = require("../controllers/messageController");
 
@@ -86,6 +89,10 @@ router.post("/companies", companyController.createCompany);
 router.put("/companies/:company_id", companyController.updateCompanyAsAdmin);
 
 
+// --------------------------------------------------------------------------------------------------------------
+// Reclamos
+router.get("/reclamos", reclamoController.getReclamosAsAdmin);
+router.get("/reclamos/:company_id", reclamoController.getReclamosByCompanyAsAdmin);
 
 // --------------------------------------------------------------------------------------------------------------
 // Manejo de Logs
