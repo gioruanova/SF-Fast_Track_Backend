@@ -28,7 +28,10 @@ async function createPublicMessage(req, res) {
     }
 
     const projectID = "service-now-6979c";
-    const siteKey = "6LdL_pErAAAAALtFUHN1Rs4MgJbF6xBv_CDKdVMr";
+    const siteKey = process.env.RECAPTCHA_SITE_KEY;
+    if (!siteKey) {
+      throw new Error("Falta RECAPTCHA_SITE_KEY en las variables de entorno");
+    }
     const action = "submit";
 
     let client;
