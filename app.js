@@ -28,9 +28,9 @@ app.use(cookieParser());
 // =====================================================================
 // Routes
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
-app.use("/public", require("./src/routes/publicRoutes"));
-app.use("/super", require("./src/routes/superRoutes"));
-app.use(require("./src/routes/userRoutes"));
+app.use("/publicApi", require("./src/routes/publicRoutes"));
+app.use("/superApi", require("./src/routes/superRoutes"));
+app.use("clientApi", require("./src/routes/userRoutes"));
 
 // =====================================================================
 // 404 fallback
@@ -42,7 +42,6 @@ app.use((req, res) => {
     </div>
   `);
 });
-
 
 // =====================================================================
 // Running

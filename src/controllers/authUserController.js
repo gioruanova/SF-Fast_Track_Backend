@@ -13,12 +13,13 @@ async function login(req, res) {
     if (result.error === "blocked") {
       return res.status(403).json({ error: "Contacte a su administrador" });
     }
+
     // ✅ Enviar tokens en cookies HTTP-only
     res.cookie("accessToken", result.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 15 * 60 * 1000, // 15 minutos
+      maxAge: 1 * 60 * 1000, // 1 minuto
     });
 
     res.cookie("refreshToken", result.refreshToken, {
@@ -28,14 +29,11 @@ async function login(req, res) {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
     });
 
-    // ✅ Devolver solo la info pública
+    // ✅ Extraer userData y devolver solo info pública
+    const { accessToken, refreshToken, ...userData } = result;
+
     return res.json({
-      company_name: result.company_name,
-      company_id: result.company_id,
-      company_status: result.company_status,
-      user_name: result.user_name,
-      user_role: result.user_role,
-      user_email: result.user_email,
+      ...userData,
     });
   } catch (error) {
     return res.status(500).json({ error: "Error interno del servidor" });
@@ -48,25 +46,22 @@ function refreshToken(req, res) {
     if (!tokenFromCookie)
       return res.status(400).json({ error: "Refresh token es requerido" });
 
-    // ✅ Extraemos solo el accessToken del objeto
-    const tokenObject = refreshUserToken(tokenFromCookie); // devuelve { accessToken, refreshToken }
+    const tokenObject = refreshUserToken(tokenFromCookie);
     if (!tokenObject || !tokenObject.accessToken)
       return res
         .status(401)
         .json({ error: "Refresh token inválido o expirado" });
 
-    const newAccessToken = tokenObject.accessToken;
-
-    // Guardamos solo el JWT en la cookie
-    res.cookie("accessToken", newAccessToken, {
+    // Solo actualizamos la cookie
+    res.cookie("accessToken", tokenObject.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 15 * 60 * 1000, // 15 minutos
+      maxAge: 15 * 60 * 1000,
     });
 
-    return res.json({ success: true });
-  } catch (error) {
+    return res.json({ success: true }); // ✅ no enviamos token
+  } catch {
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }

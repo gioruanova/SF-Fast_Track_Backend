@@ -16,7 +16,7 @@ async function getAllMessagesCategoriesAsAdmin(req, res) {
 
 async function getAllMessagesCategoriesAsPublic(req, res) {
   try {
-    const categories = await PublicMessageCategory.query().select("*");
+    const categories = await PublicMessageCategory.query().select("*").where("category_status", true);
     return res.json(categories);
   } catch (error) {
      

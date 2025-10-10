@@ -8,6 +8,15 @@ exports.seed = function (knex) {
     .then(() =>
       knex("users").insert([
         {
+          user_complete_name: "Jorge Ruanova",
+          user_email: "jruanova.dev@gmail.com",
+          user_dni: "123456",
+          user_phone: "123456789",
+          user_role: "superadmin",
+          user_password: bcrypt.hashSync("123456", saltRounds),
+          user_status: true,
+        },
+        {
           user_complete_name: "Owner 1",
           user_email: "owner@gmail.com",
           user_dni: "123456",
@@ -17,7 +26,7 @@ exports.seed = function (knex) {
           user_status: true,
           company_id: 1000,
         },
-                {
+        {
           user_complete_name: "Owner 2",
           user_email: "owner-2@gmail.com",
           user_dni: "12345678978",
