@@ -10,7 +10,7 @@ const app = express();
 const port = process.env.PORT || 8888;
 
 const corsOptions = {
-  origin: [process.env.BACK_TEST_SITE, process.env.BACK_TEST_SITE_2],
+  origin: [process.env.BACK_TEST_SITE, process.env.BACK_TEST_SITE_2, process.env.BACK_TEST_SITE_3],
   credentials: true,
   methods: "GET,PUT,POST,DELETE",
   allowedHeaders: ["Authorization", "Content-Type"],

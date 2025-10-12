@@ -48,36 +48,18 @@ async function loginUser(email, password) {
     }
   }
 
-  let payload;
-
-  if (user.user_role === "superadmin") {
-    // SUPERADMIN → sin info de company
-    payload = {
-      user_id: user.user_id,
-      user_email: user.user_email,
-      user_name: user.user_complete_name,
-      user_role: user.user_role,
-    };
-  } else {
-    // Otros roles → con company
-    payload = {
-      user_id: user.user_id,
-      user_email: user.user_email,
-      user_name: user.user_complete_name,
-      user_role: user.user_role,
-      company_id: company?.company_id || null,
-      company_name: company?.company_nombre || null,
-      company_status: company?.company_estado || null,
-    };
-  }
+  const payload = {
+    user_id: user.user_id,
+    user_role: user.user_role.toLowerCase(),
+    company_id: company?.company_id || null,
+  };
 
   const { accessToken, refreshToken } = generateTokens(payload);
 
-return {
-  ...payload,
-  accessToken,
-  refreshToken,
-};
+  return {
+    accessToken,
+    refreshToken,
+  };
 }
 
 function refreshUserToken(refreshToken) {

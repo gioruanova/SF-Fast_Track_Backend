@@ -133,7 +133,6 @@ async function bloquearHorario(data) {
   const fechaHoraDesde = new Date(`${agenda_fecha}T${agenda_hora_desde}`);
 
   if (fechaHoraDesde <= now) {
-    console.log("aca");
 
     throw new Error("No se puede bloquear un horario en el pasado");
   }

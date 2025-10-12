@@ -527,6 +527,7 @@ async function editUserAsClient(req, res) {
 // Obtener todos lo suaurios
 // ---------------------------------------------------------
 async function getUsersAsClient(req, res) {
+  
   const companyId = req.user.company_id;
 
   try {
@@ -719,7 +720,6 @@ async function restoreUserAsClient(req, res) {
 // ---------------------------------------------------------
 async function getWorkloadState(req, res) {
     const user_id = req.user.user_id;
-    console.log('aca');
     
 
     try {
@@ -740,7 +740,6 @@ async function enableReceiveWork(req, res) {
 
   try {
     const userAvailableWork = await User.query().findById(user_id);
-    console.log(userAvailableWork);
 
     if (userAvailableWork.apto_recibir === 1) {
       return res.status(400).json({

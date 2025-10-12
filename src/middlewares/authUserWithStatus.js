@@ -20,8 +20,6 @@ function authUserWithStatus(...allowedRoles) {
 
       // Convertimos a milisegundos y creamos un objeto Date
       const expDate = new Date(expTimestamp * 1000);
-      // console.log(expDate.toString());
-      // console.log(expDate.toISOString());
 
       // valido roles
       if (

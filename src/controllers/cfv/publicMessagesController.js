@@ -72,7 +72,6 @@ async function createPublicMessage(req, res) {
     console.log("reCAPTCHA completo:", JSON.stringify(response, null, 2));
 
     if (!response.tokenProperties?.valid) {
-      console.log("Token inválido:", response.tokenProperties.invalidReason);
       return res.status(403).json({ error: "Captcha inválido" });
     }
 

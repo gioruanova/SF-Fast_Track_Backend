@@ -7,11 +7,9 @@ const companyConfigController = require("./companyConfigController");
 // Obtener clientes recurrentes
 // ---------------------------------------------------------
 async function getAllClientesRecurrentesAsClient(req, res) {
-  console.log('aca');
   
   
   const company_id = req.user.company_id;
-  console.log(req);
   try {
     const clientesRecurrentes = await ClienteRecurrente.query().where({
       company_id,

@@ -230,7 +230,6 @@ async function updateReclamoAsClient(req, res) {
       message: "Reclamo actualizado correctamente",
     });
   } catch (error) {
-    console.log(error);
 
     return res.status(500).json({ error: "Error interno del servidor" });
   }

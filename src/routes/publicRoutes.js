@@ -9,6 +9,8 @@ router.get("/messageCategories", publicMessageCategoryController.getAllMessagesC
 
 
 router.post("/login", authUserController.login);
-router.post("/refresh", authUserController.refreshToken);
+router.get("/refresh", authUserController.refreshToken);
+router.get("/profile", authUserController.getProfile);
+router.get("/logout", authUserController.logout);
 
 module.exports = router;
