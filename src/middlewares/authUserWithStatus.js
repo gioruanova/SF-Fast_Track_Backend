@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const Company = require("../models/Company");
 const User = require("../models/User");
 
-function authUserWithStatus(...allowedRoles) {
+function authUserWithStatus(allowedRoles = [], options = {}) {
   return async function (req, res, next) {
     // ✅ Leer token desde cookie
 
@@ -34,11 +34,13 @@ function authUserWithStatus(...allowedRoles) {
       const { company_id, user_id } = req.user;
 
       // check del estado de la empresa
-      const company = await Company.query().findById(company_id);
-      if (!company || company.company_estado !== 1) {
-        return res
-          .status(403)
-          .json({ error: "Contacte al administrador del sistema por favor." });
+      if (!options.skipCompanyCheck) {
+        const company = await Company.query().findById(company_id);
+        if (!company || company.company_estado !== 1) {
+          return res.status(403).json({
+            error: "Contacte al administrador del sistema por favor.",
+          });
+        }
       }
 
       // valido estado del user
