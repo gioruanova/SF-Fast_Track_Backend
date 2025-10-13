@@ -20,7 +20,7 @@ async function login(req, res) {
     res.cookie("accessToken", result.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
       maxAge: 1 * 60 * 1000, // 1 minuto
     });
@@ -28,7 +28,7 @@ async function login(req, res) {
     res.cookie("refreshToken", result.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
     });
@@ -63,7 +63,7 @@ function refreshToken(req, res) {
     res.cookie("accessToken", tokenObject.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
       maxAge: 15 * 60 * 1000,
     });
@@ -97,7 +97,6 @@ async function getProfile(req, res) {
       company = await user.$relatedQuery("company").first();
     }
 
-
     if (user.user_role == "superadmin") {
       return res.json({
         user_id: user.user_id,
@@ -127,14 +126,14 @@ function logout(req, res) {
   res.clearCookie("accessToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
   });
 
   res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
   });
 
