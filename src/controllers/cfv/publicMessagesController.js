@@ -5,6 +5,7 @@ const {
 
 const PublicMessageCategory = require("../../models/cfv/PublicMessageCategory");
 const path = require("path");
+const { loginUser } = require("../../services/authUserService");
 
 // CONTROLADORES PUBLIC:
 // ---------------------------------------------------------
@@ -136,7 +137,7 @@ async function createFeedbackMessage(req, res) {
       message_email: req.user.user_email,
       message_source: "PLATFORM",
       message_phone: "N/A",
-      message_content: `EMPRESA | ${req.user.company_name} ${message_content}`,
+      message_content: `EMPRESA: ${req.user.company_name} | Mensaje: ${message_content}`,
       category_id: 0,
       category_original: "Feedback",
     });

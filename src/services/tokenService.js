@@ -28,6 +28,7 @@ function refreshAccessToken(refreshToken) {
       user_email: decoded.email,
       user_role: decoded.user_role,
       company_id: decoded.company_id,
+      company_name: decoded.company_name,
       user_name: decoded.user_name,
     };
 

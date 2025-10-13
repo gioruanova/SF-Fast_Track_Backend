@@ -52,6 +52,7 @@ async function loginUser(email, password) {
     user_id: user.user_id,
     user_role: user.user_role.toLowerCase(),
     company_id: company?.company_id || null,
+    company_name: company?.company_nombre || null,
   };
 
   const { accessToken, refreshToken } = generateTokens(payload);
