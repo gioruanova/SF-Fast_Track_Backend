@@ -254,11 +254,11 @@ router.delete(
 );
 
 // Feedback
-router.post(
-  "/platform/feedback",
-  authUserWithStatus("owner", "operador", "profesional"),
-  publicMEssageController.createFeedbackMessage
-);
+  router.post(
+    "/platform/feedback",
+    authUserWithStatus("owner", "operador", "profesional"),
+    publicMEssageController.createFeedbackMessage
+  );
 
 // Mensajes globales
 router.get(

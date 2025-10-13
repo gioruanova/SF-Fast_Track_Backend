@@ -52,6 +52,8 @@ async function loginUser(email, password) {
     user_id: user.user_id,
     user_role: user.user_role.toLowerCase(),
     company_id: company?.company_id || null,
+    user_email: user.user_email,
+    user_name: user.user_complete_name,
     company_name: company?.company_nombre || null,
   };
 

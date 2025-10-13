@@ -30,6 +30,7 @@ function refreshAccessToken(refreshToken) {
       company_id: decoded.company_id,
       company_name: decoded.company_name,
       user_name: decoded.user_name,
+      
     };
 
     // Nuevo accessToken
