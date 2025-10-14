@@ -8,15 +8,11 @@ const { registrarNuevoLog } = require("../controllers/globalLogController");
 // Get all companies
 // ---------------------------------------------------------
 async function getAllCompanies(req, res) {
-  
-  
   try {
     const companies = await Company.query()
       .withGraphJoined("users")
       .withGraphFetched("users.especialidades.Especialidad");
 
-      console.log(companies);
-      
     return res.json(companies);
   } catch (error) {
     return res.status(500).json({ error: "Error interno del servidor" });
@@ -60,7 +56,6 @@ async function updateCompanyAsAdmin(req, res) {
       updateData
     );
 
-
     /*LOGGER*/ await registrarNuevoLog(
       company.company_id,
       "La empresa " +
@@ -69,7 +64,10 @@ async function updateCompanyAsAdmin(req, res) {
         " (Ejecutado por Sistema)."
     );
 
-    return res.json({ success: true, message: "Empresa actualizada exitosamente" });
+    return res.json({
+      success: true,
+      message: "Empresa actualizada exitosamente",
+    });
   } catch (error) {
     return res.status(500).json({ error: "Error interno del servidor" });
   }
