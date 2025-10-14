@@ -39,8 +39,11 @@ router.get(
 );
 router.get(
   "/company/config",
-    authUserWithStatus(["owner", "operador", "profesional"], { skipCompanyCheck: true }),  companyConfigController.getCompanySettingsByClient
+  authUserWithStatus({ roles: ["owner", "operador", "profesional"], skipCompanyCheck: true }),
+  companyConfigController.getCompanySettingsByClient
 );
+
+
 router.put(
   "/company",
   authUserWithStatus("owner"),

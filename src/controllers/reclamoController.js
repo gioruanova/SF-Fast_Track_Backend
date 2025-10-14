@@ -292,7 +292,7 @@ async function updateReclamoAsProfesional(req, res) {
     if (!reclamoExiste) {
       return res.status(404).json({ error: "Reclamo no encontrado" });
     }
-    if (reclamoExiste.reclamo_estado === "CERRADO") {
+    if (reclamoExiste.reclamo_estado === "CERRADO" || reclamo_estado === "CANCELADO") {
       return res.status(400).json({ error: "El reclamo ya esta cerrado" });
     }
 
