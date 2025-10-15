@@ -318,3 +318,1547 @@ module.exports = router;
 
 // =========================================================
 // DOCUMENTACION SWAGGER
+// =========================================================
+
+/**
+ * @swagger
+ * /company/companyInfo:
+ *   get:
+ *     summary: EMPRESA - Obtener información (Owner)
+ *     description: Obtiene la información completa de la empresa del usuario autenticado
+ *     tags:
+ *       - Customer API - EMPRESA
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Información de la empresa obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 company_id:
+ *                   type: integer
+ *                   example: 1
+ *                 company_nombre:
+ *                   type: string
+ *                   example: "Mi Empresa S.A."
+ *                 company_phone:
+ *                   type: string
+ *                   example: "+54 9 11 1234-5678"
+ *                 company_email:
+ *                   type: string
+ *                   example: "contacto@miempresa.com"
+ *       404:
+ *         description: Empresa no encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Empresa no encontrada"
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Error interno del servidor"
+ */
+
+/**
+ * @swagger
+ * /company/companyStatus:
+ *   get:
+ *     summary: EMPRESA - Obtener estado de configuración (Owner)
+ *     description: Obtiene el estado de configuración de la empresa
+ *     tags:
+ *       - Customer API - EMPRESA
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Estado de configuración obtenido exitosamente
+ *       404:
+ *         description: Configuración de empresa no encontrada
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /company/config:
+ *   get:
+ *     summary: EMPRESA - Obtener configuración
+ *     description: Obtiene la configuración de la empresa (disponible para todos los roles)
+ *     tags:
+ *       - Customer API - EMPRESA
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Configuración obtenida exitosamente
+ *       404:
+ *         description: Configuración de empresa no encontrada
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /company:
+ *   put:
+ *     summary: EMPRESA - Actualizar información (Owner)
+ *     description: Actualiza la información de contacto de la empresa
+ *     tags:
+ *       - Customer API - EMPRESA
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               company_phone:
+ *                 type: string
+ *                 description: Teléfono de la empresa
+ *                 example: "+54 9 11 1234-5678"
+ *               company_email:
+ *                 type: string
+ *                 format: email
+ *                 description: Email de la empresa
+ *                 example: "contacto@miempresa.com"
+ *               company_whatsapp:
+ *                 type: string
+ *                 description: WhatsApp de la empresa
+ *                 example: "+54 9 11 1234-5678"
+ *               company_telegram:
+ *                 type: string
+ *                 description: Telegram de la empresa
+ *                 example: "@miempresa"
+ *     responses:
+ *       200:
+ *         description: Empresa actualizada exitosamente
+ *       400:
+ *         description: Campo no puede estar vacío o no se proporcionó ningún campo válido
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /company/config:
+ *   put:
+ *     summary: EMPRESA - Actualizar configuración (Owner)
+ *     description: Actualiza la configuración de la empresa
+ *     tags:
+ *       - Customer API - EMPRESA
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               requiere_domicilio:
+ *                 type: boolean
+ *                 description: Requiere domicilio para clientes
+ *                 example: true
+ *               requiere_url:
+ *                 type: boolean
+ *                 description: Requiere URL en reclamos
+ *                 example: false
+ *     responses:
+ *       200:
+ *         description: Configuración actualizada exitosamente
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: USUARIOS - Listar de la empresa
+ *     description: Obtiene todos los usuarios de la empresa (Owner/Operador)
+ *     tags:
+ *       - Customer API - USUARIOS
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de usuarios obtenida exitosamente
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /users:
+ *   post:
+ *     summary: USUARIOS - Crear nuevo
+ *     description: Crea un nuevo usuario en la empresa (Owner/Operador)
+ *     tags:
+ *       - Customer API - USUARIOS
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - user_complete_name
+ *               - user_dni
+ *               - user_phone
+ *               - user_email
+ *               - user_password
+ *               - user_role
+ *             properties:
+ *               user_complete_name:
+ *                 type: string
+ *                 description: "* Nombre completo del usuario"
+ *                 example: "Juan Pérez"
+ *               user_dni:
+ *                 type: string
+ *                 description: "* DNI del usuario"
+ *                 example: "12345678"
+ *               user_phone:
+ *                 type: string
+ *                 description: "* Teléfono del usuario"
+ *                 example: "+54 9 11 1234-5678"
+ *               user_email:
+ *                 type: string
+ *                 format: email
+ *                 description: "* Email del usuario"
+ *                 example: "juan@empresa.com"
+ *               user_password:
+ *                 type: string
+ *                 format: password
+ *                 description: "* Contraseña del usuario"
+ *                 example: "Password123!"
+ *               user_role:
+ *                 type: string
+ *                 enum: [operador, profesional]
+ *                 description: "* Rol del usuario"
+ *                 example: "profesional"
+ *     responses:
+ *       201:
+ *         description: Usuario creado exitosamente
+ *       400:
+ *         description: Email ya registrado o límite de usuarios alcanzado
+ *       403:
+ *         description: No tenés permiso para crear este tipo de usuario
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /users/{user_id}:
+ *   put:
+ *     summary: USUARIOS - Actualizar
+ *     description: Actualiza la información de un usuario (Owner/Operador)
+ *     tags:
+ *       - Customer API - USUARIOS
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del usuario
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_complete_name:
+ *                 type: string
+ *                 example: "Juan Pérez Actualizado"
+ *               user_dni:
+ *                 type: string
+ *                 example: "87654321"
+ *               user_phone:
+ *                 type: string
+ *                 example: "+54 9 11 9876-5432"
+ *               user_email:
+ *                 type: string
+ *                 example: "juan.nuevo@empresa.com"
+ *               user_password:
+ *                 type: string
+ *                 example: "NuevaPassword123!"
+ *     responses:
+ *       200:
+ *         description: Usuario actualizado exitosamente
+ *       400:
+ *         description: Usuario no existe o email/DNI ya registrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /users/block/{user_id}:
+ *   post:
+ *     summary: USUARIOS - Bloquear (Owner)
+ *     description: Bloquea un usuario de la empresa
+ *     tags:
+ *       - Customer API - USUARIOS
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Usuario bloqueado exitosamente
+ *       400:
+ *         description: Usuario no existe o ya bloqueado
+ *       403:
+ *         description: No tenés permiso para gestionar este usuario
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /users/unblock/{user_id}:
+ *   post:
+ *     summary: USUARIOS - Desbloquear (Owner)
+ *     description: Desbloquea un usuario de la empresa
+ *     tags:
+ *       - Customer API - USUARIOS
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Usuario desbloqueado exitosamente
+ *       400:
+ *         description: Usuario no existe o ya desbloqueado
+ *       403:
+ *         description: No tenés permiso para gestionar este usuario
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /users/restore/{user_id}:
+ *   put:
+ *     summary: USUARIOS - Restaurar con nueva contraseña (Owner)
+ *     description: Restaura un usuario bloqueado estableciendo una nueva contraseña
+ *     tags:
+ *       - Customer API - USUARIOS
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - new_password
+ *             properties:
+ *               new_password:
+ *                 type: string
+ *                 format: password
+ *                 description: "* Nueva contraseña para el usuario"
+ *                 example: "NuevaPassword123!"
+ *     responses:
+ *       200:
+ *         description: Usuario restaurado exitosamente
+ *       400:
+ *         description: Contraseña no provista o usuario ya habilitado
+ *       403:
+ *         description: No tenés permiso para gestionar este usuario
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /especialidades:
+ *   get:
+ *     summary: ESPECIALIDADES - Listar de la empresa
+ *     description: Obtiene especialidades de la empresa (Owner/Operador)
+ *     tags:
+ *       - Customer API - ESPECIALIDADES
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de especialidades obtenida exitosamente
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /especialidades:
+ *   post:
+ *     summary: ESPECIALIDADES - Crear nueva (Owner)
+ *     description: Crea una nueva especialidad para la empresa
+ *     tags:
+ *       - Customer API - ESPECIALIDADES
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - nombre_especialidad
+ *             properties:
+ *               nombre_especialidad:
+ *                 type: string
+ *                 description: "* Nombre de la especialidad"
+ *                 example: "Medicina General"
+ *     responses:
+ *       201:
+ *         description: Especialidad creada exitosamente
+ *       400:
+ *         description: Campo requerido faltante o límite alcanzado
+ *       409:
+ *         description: La especialidad ya existe
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /especialidades/{especialidadId}:
+ *   put:
+ *     summary: ESPECIALIDADES - Actualizar (Owner)
+ *     description: Actualiza el nombre de una especialidad
+ *     tags:
+ *       - Customer API - ESPECIALIDADES
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: especialidadId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - nombre_especialidad
+ *             properties:
+ *               nombre_especialidad:
+ *                 type: string
+ *                 description: "* Nuevo nombre"
+ *                 example: "Medicina General Actualizada"
+ *     responses:
+ *       200:
+ *         description: Especialidad actualizada exitosamente
+ *       400:
+ *         description: Campo requerido faltante
+ *       404:
+ *         description: Especialidad no encontrada
+ *       409:
+ *         description: Ya existe una especialidad con ese nombre
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /especialidades/block/{especialidadId}:
+ *   put:
+ *     summary: ESPECIALIDADES - Desactivar (Owner)
+ *     description: Desactiva una especialidad
+ *     tags:
+ *       - Customer API - ESPECIALIDADES
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: especialidadId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Especialidad desactivada exitosamente
+ *       400:
+ *         description: Especialidad ya desactivada
+ *       404:
+ *         description: Especialidad no encontrada
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /especialidades/unblock/{especialidadId}:
+ *   put:
+ *     summary: ESPECIALIDADES - Activar (Owner)
+ *     description: Activa una especialidad previamente desactivada
+ *     tags:
+ *       - Customer API - ESPECIALIDADES
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: especialidadId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Especialidad activada exitosamente
+ *       400:
+ *         description: Especialidad ya activada
+ *       404:
+ *         description: Especialidad no encontrada
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /profesionalEspecialidad:
+ *   post:
+ *     summary: ESPECIALIDADES - Asignar a profesional
+ *     description: Asigna una especialidad a un profesional (Owner/Operador)
+ *     tags:
+ *       - Customer API - ESPECIALIDADES
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - profesional_id
+ *               - especialidad_id
+ *             properties:
+ *               profesional_id:
+ *                 type: integer
+ *                 description: "* ID del profesional"
+ *                 example: 1
+ *               especialidad_id:
+ *                 type: integer
+ *                 description: "* ID de la especialidad"
+ *                 example: 1
+ *     responses:
+ *       201:
+ *         description: Especialidad asignada exitosamente
+ *       400:
+ *         description: Campos requeridos faltantes o especialidad inactiva
+ *       404:
+ *         description: Profesional o especialidad no encontrados
+ *       409:
+ *         description: La especialidad ya está asignada
+ *       500:
+ *         description: Error al asignar la especialidad
+ */
+
+/**
+ * @swagger
+ * /profesionalEspecialidad/{id_asignacion}:
+ *   delete:
+ *     summary: ESPECIALIDADES - Eliminar asignación
+ *     description: Elimina la asignación de una especialidad (Owner/Operador)
+ *     tags:
+ *       - Customer API - ESPECIALIDADES
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id_asignacion
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       201:
+ *         description: Asignación eliminada exitosamente
+ *       404:
+ *         description: Asignación no encontrada
+ *       500:
+ *         description: Error al eliminar la asignación
+ */
+
+/**
+ * @swagger
+ * /profesionalEspecialidad/{id_asignacion}:
+ *   put:
+ *     summary: ESPECIALIDADES - Editar asignación
+ *     description: Edita la asignación cambiándola por otra especialidad (Owner/Operador)
+ *     tags:
+ *       - Customer API - ESPECIALIDADES
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id_asignacion
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - especialidad_id
+ *             properties:
+ *               especialidad_id:
+ *                 type: integer
+ *                 description: "* ID de la nueva especialidad"
+ *                 example: 2
+ *     responses:
+ *       201:
+ *         description: Asignación editada exitosamente
+ *       400:
+ *         description: ID requerido o especialidad inactiva
+ *       404:
+ *         description: Asignación o especialidad no encontrada
+ *       409:
+ *         description: La especialidad ya está asignada
+ *       500:
+ *         description: Error al editar la asignación
+ */
+
+/**
+ * @swagger
+ * /clientes-recurrentes:
+ *   get:
+ *     summary: CLIENTES RECURRENTES - Listar
+ *     description: Obtiene clientes recurrentes de la empresa (Owner/Operador)
+ *     tags:
+ *       - Customer API - CLIENTES RECURRENTES
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de clientes obtenida exitosamente
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /clientes-recurrentes:
+ *   post:
+ *     summary: CLIENTES RECURRENTES - Crear nuevo
+ *     description: Crea un nuevo cliente recurrente (Owner/Operador)
+ *     tags:
+ *       - Customer API - CLIENTES RECURRENTES
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - cliente_complete_name
+ *               - cliente_dni
+ *               - cliente_phone
+ *               - cliente_email
+ *             properties:
+ *               cliente_complete_name:
+ *                 type: string
+ *                 description: "* Nombre completo del cliente"
+ *                 example: "María González"
+ *               cliente_dni:
+ *                 type: string
+ *                 description: "* DNI del cliente"
+ *                 example: "12345678"
+ *               cliente_phone:
+ *                 type: string
+ *                 description: "* Teléfono del cliente"
+ *                 example: "+54 9 11 1234-5678"
+ *               cliente_email:
+ *                 type: string
+ *                 description: "* Email del cliente"
+ *                 example: "maria@email.com"
+ *               cliente_direccion:
+ *                 type: string
+ *                 description: Dirección del cliente
+ *                 example: "Av. Corrientes 1234"
+ *               cliente_lat:
+ *                 type: number
+ *                 description: Latitud
+ *                 example: -34.6037
+ *               cliente_lng:
+ *                 type: number
+ *                 description: Longitud
+ *                 example: -58.3816
+ *     responses:
+ *       200:
+ *         description: Cliente creado exitosamente
+ *       400:
+ *         description: Campos obligatorios faltantes o cliente ya existe
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /agenda:
+ *   get:
+ *     summary: AGENDA - Listar agenda bloqueada
+ *     description: Obtiene la agenda bloqueada de la empresa (Owner/Operador)
+ *     tags:
+ *       - Customer API - AGENDA
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Agenda bloqueada obtenida exitosamente
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /agendaBloqueada/{user_id}:
+ *   post:
+ *     summary: AGENDA - Obtener disponibilidad bloqueada por profesional
+ *     description: Obtiene la disponibilidad bloqueada de un profesional (Owner/Operador)
+ *     tags:
+ *       - Customer API - AGENDA
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Disponibilidad bloqueada obtenida exitosamente
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /agenda/{user_id}:
+ *   post:
+ *     summary: AGENDA - Crear bloqueo (Owner/Operador)
+ *     description: Crea un bloqueo de agenda para un profesional
+ *     tags:
+ *       - Customer API - AGENDA
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - agenda_fecha
+ *               - agenda_hora_desde
+ *               - agenda_hora_hasta
+ *             properties:
+ *               agenda_fecha:
+ *                 type: string
+ *                 format: date
+ *                 description: "* Fecha del bloqueo"
+ *                 example: "2024-01-15"
+ *               agenda_hora_desde:
+ *                 type: string
+ *                 description: "* Hora de inicio"
+ *                 example: "09:00"
+ *               agenda_hora_hasta:
+ *                 type: string
+ *                 description: "* Hora de fin"
+ *                 example: "10:00"
+ *               agenda_notas:
+ *                 type: string
+ *                 description: Notas del bloqueo
+ *                 example: "Reunión importante"
+ *     responses:
+ *       201:
+ *         description: Bloqueo creado exitosamente
+ *       400:
+ *         description: Datos obligatorios faltantes
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /profesional/agenda:
+ *   post:
+ *     summary: AGENDA - Crear bloqueo (Profesional)
+ *     description: Permite al profesional crear bloqueos en su propia agenda
+ *     tags:
+ *       - Customer API - AGENDA
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - agenda_fecha
+ *               - agenda_hora_desde
+ *               - agenda_hora_hasta
+ *             properties:
+ *               agenda_fecha:
+ *                 type: string
+ *                 format: date
+ *                 description: "* Fecha del bloqueo"
+ *                 example: "2024-01-15"
+ *               agenda_hora_desde:
+ *                 type: string
+ *                 description: "* Hora de inicio"
+ *                 example: "09:00"
+ *               agenda_hora_hasta:
+ *                 type: string
+ *                 description: "* Hora de fin"
+ *                 example: "10:00"
+ *               agenda_notas:
+ *                 type: string
+ *                 description: Notas del bloqueo
+ *                 example: "Descanso personal"
+ *     responses:
+ *       201:
+ *         description: Bloqueo creado exitosamente
+ *       400:
+ *         description: Datos obligatorios faltantes
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /agenda/vista/profesional:
+ *   get:
+ *     summary: AGENDA - Vista de agenda para profesional
+ *     description: Obtiene la vista de agenda bloqueada (Todos los roles)
+ *     tags:
+ *       - Customer API - AGENDA
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Vista de agenda obtenida exitosamente
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /reclamo:
+ *   post:
+ *     summary: RECLAMOS - Crear nuevo
+ *     description: Crea un nuevo reclamo (Owner/Operador)
+ *     tags:
+ *       - Customer API - RECLAMOS
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - reclamo_titulo
+ *               - reclamo_detalle
+ *               - profesional_id
+ *               - especialidad_id
+ *               - cliente_id
+ *               - agenda_fecha
+ *               - agenda_hora_desde
+ *             properties:
+ *               reclamo_titulo:
+ *                 type: string
+ *                 description: "* Título del reclamo"
+ *                 example: "Instalación de sistema"
+ *               reclamo_detalle:
+ *                 type: string
+ *                 description: "* Detalle del reclamo"
+ *                 example: "Instalación completa del sistema"
+ *               profesional_id:
+ *                 type: integer
+ *                 description: "* ID del profesional"
+ *                 example: 1
+ *               especialidad_id:
+ *                 type: integer
+ *                 description: "* ID de la especialidad"
+ *                 example: 1
+ *               cliente_id:
+ *                 type: integer
+ *                 description: "* ID del cliente"
+ *                 example: 1
+ *               agenda_fecha:
+ *                 type: string
+ *                 format: date
+ *                 description: "* Fecha del reclamo"
+ *                 example: "2024-01-15"
+ *               agenda_hora_desde:
+ *                 type: string
+ *                 description: "* Hora de inicio"
+ *                 example: "09:00"
+ *               agenda_hora_hasta:
+ *                 type: string
+ *                 description: Hora de fin
+ *                 example: "10:00"
+ *               reclamo_url:
+ *                 type: string
+ *                 description: URL del reclamo
+ *                 example: "https://ejemplo.com/reclamo"
+ *     responses:
+ *       201:
+ *         description: Reclamo creado exitosamente
+ *       400:
+ *         description: Datos inválidos o especialidad no asignada
+ *       500:
+ *         description: Error creando reclamo
+ */
+
+/**
+ * @swagger
+ * /reclamos:
+ *   get:
+ *     summary: RECLAMOS - Listar (Owner/Operador)
+ *     description: Obtiene todos los reclamos de la empresa
+ *     tags:
+ *       - Customer API - RECLAMOS
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de reclamos obtenida exitosamente
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /reclamos/gestion/{reclamo_id}:
+ *   get:
+ *     summary: RECLAMOS - Obtener por ID (Owner/Operador)
+ *     description: Obtiene los detalles de un reclamo específico
+ *     tags:
+ *       - Customer API - RECLAMOS
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: reclamo_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Reclamo obtenido exitosamente
+ *       404:
+ *         description: Reclamo no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /reclamos/gestion/{reclamo_id}:
+ *   put:
+ *     summary: RECLAMOS - Actualizar (Owner/Operador)
+ *     description: Actualiza un reclamo específico
+ *     tags:
+ *       - Customer API - RECLAMOS
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: reclamo_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               reclamo_estado:
+ *                 type: string
+ *                 description: Estado del reclamo
+ *                 example: "CERRADO"
+ *               reclamo_nota_cierre:
+ *                 type: string
+ *                 description: Nota de cierre
+ *                 example: "Trabajo completado satisfactoriamente"
+ *               reclamo_presupuesto:
+ *                 type: number
+ *                 description: Presupuesto del reclamo
+ *                 example: 5000
+ *     responses:
+ *       200:
+ *         description: Reclamo actualizado exitosamente
+ *       400:
+ *         description: Nota de cierre requerida para cerrar
+ *       404:
+ *         description: Reclamo no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /reclamos/profesional:
+ *   get:
+ *     summary: RECLAMOS - Listar asignados (Profesional)
+ *     description: Obtiene los reclamos asignados al profesional
+ *     tags:
+ *       - Customer API - RECLAMOS
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de reclamos obtenida exitosamente
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /reclamos/profesional/gestion/{reclamo_id}:
+ *   get:
+ *     summary: RECLAMOS - Obtener por ID (Profesional)
+ *     description: Obtiene los detalles de un reclamo asignado
+ *     tags:
+ *       - Customer API - RECLAMOS
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: reclamo_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Reclamo obtenido exitosamente
+ *       404:
+ *         description: Reclamo no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /reclamos/profesional/gestion/{reclamo_id}:
+ *   put:
+ *     summary: RECLAMOS - Actualizar (Profesional)
+ *     description: Actualiza un reclamo asignado al profesional
+ *     tags:
+ *       - Customer API - RECLAMOS
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: reclamo_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               reclamo_estado:
+ *                 type: string
+ *                 example: "EN_PROGRESO"
+ *               reclamo_nota_cierre:
+ *                 type: string
+ *                 example: "Trabajo iniciado"
+ *               reclamo_presupuesto:
+ *                 type: number
+ *                 example: 5000
+ *     responses:
+ *       200:
+ *         description: Reclamo actualizado exitosamente
+ *       400:
+ *         description: Nota de cierre requerida o reclamo ya cerrado
+ *       404:
+ *         description: Reclamo no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /workload/estado:
+ *   get:
+ *     summary: WORKLOAD - Obtener estado (Profesional)
+ *     description: Obtiene el estado actual de disponibilidad para recibir trabajo
+ *     tags:
+ *       - Customer API - WORKLOAD
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Estado obtenido exitosamente
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /workload/enable:
+ *   put:
+ *     summary: WORKLOAD - Habilitar recepción de trabajo (Profesional)
+ *     description: Habilita la recepción de nuevos trabajos
+ *     tags:
+ *       - Customer API - WORKLOAD
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Recepción de trabajo habilitada
+ *       400:
+ *         description: El profesional ya estaba habilitado
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /workload/disable:
+ *   put:
+ *     summary: WORKLOAD - Deshabilitar recepción de trabajo (Profesional)
+ *     description: Deshabilita la recepción de nuevos trabajos
+ *     tags:
+ *       - Customer API - WORKLOAD
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Recepción de trabajo deshabilitada
+ *       400:
+ *         description: El profesional ya estaba deshabilitado
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /globalLogs:
+ *   get:
+ *     summary: LOGS - Obtener todos (Owner)
+ *     description: Obtiene todos los logs de la empresa
+ *     tags:
+ *       - Customer API - LOGS
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Logs obtenidos exitosamente
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /globalLogs/read:
+ *   put:
+ *     summary: LOGS - Marcar todos como leídos (Owner)
+ *     description: Marca todos los logs como leídos
+ *     tags:
+ *       - Customer API - LOGS
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Logs marcados como leídos
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /globalLogs/unread:
+ *   put:
+ *     summary: LOGS - Marcar todos como no leídos (Owner)
+ *     description: Marca todos los logs como no leídos
+ *     tags:
+ *       - Customer API - LOGS
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Logs marcados como no leídos
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /globalLogs:
+ *   delete:
+ *     summary: LOGS - Eliminar (Owner)
+ *     description: Elimina logs de la empresa
+ *     tags:
+ *       - Customer API - LOGS
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Logs eliminados exitosamente
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /platform/feedback:
+ *   post:
+ *     summary: FEEDBACK - Enviar feedback
+ *     description: Envía feedback a la plataforma (Todos los roles)
+ *     tags:
+ *       - Customer API - FEEDBACK
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - message_content
+ *             properties:
+ *               message_content:
+ *                 type: string
+ *                 description: "* Contenido del feedback"
+ *                 example: "La plataforma funciona muy bien"
+ *     responses:
+ *       201:
+ *         description: Feedback enviado exitosamente
+ *       400:
+ *         description: Contenido es requerido
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /platform/messages:
+ *   get:
+ *     summary: MENSAJES DE PLATAFORMA - Listar
+ *     description: Obtiene mensajes de la plataforma (Todos los roles)
+ *     tags:
+ *       - Customer API - MENSAJES DE PLATAFORMA
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Mensajes obtenidos exitosamente
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /platform/messages:
+ *   post:
+ *     summary: MENSAJES DE PLATAFORMA - Crear para empresa
+ *     description: Crea un mensaje para toda la empresa (Owner/Operador)
+ *     tags:
+ *       - Customer API - MENSAJES DE PLATAFORMA
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - message_title
+ *               - message_content
+ *             properties:
+ *               message_title:
+ *                 type: string
+ *                 description: "* Título del mensaje"
+ *                 example: "Reunión general"
+ *               message_content:
+ *                 type: string
+ *                 description: "* Contenido del mensaje"
+ *                 example: "Reunión mañana a las 10:00"
+ *     responses:
+ *       201:
+ *         description: Mensaje creado exitosamente
+ *       400:
+ *         description: Título y contenido son requeridos
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /platform/messages/user/{user_id}:
+ *   post:
+ *     summary: MENSAJES DE PLATAFORMA - Crear para usuario
+ *     description: Crea un mensaje para un usuario específico (Owner/Operador)
+ *     tags:
+ *       - Customer API - MENSAJES DE PLATAFORMA
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - message_title
+ *               - message_content
+ *             properties:
+ *               message_title:
+ *                 type: string
+ *                 description: "* Título del mensaje"
+ *                 example: "Tarea asignada"
+ *               message_content:
+ *                 type: string
+ *                 description: "* Contenido del mensaje"
+ *                 example: "Tienes una nueva tarea"
+ *     responses:
+ *       201:
+ *         description: Mensaje creado exitosamente
+ *       400:
+ *         description: Título y contenido son requeridos
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /platform/messages/{platform_message_id}:
+ *   delete:
+ *     summary: MENSAJES DE PLATAFORMA - Eliminar mensaje de empresa (Owner)
+ *     description: Elimina un mensaje de la empresa
+ *     tags:
+ *       - Customer API - MENSAJES DE PLATAFORMA
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: platform_message_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Mensaje eliminado exitosamente
+ *       404:
+ *         description: Mensaje no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /platform/single-message/{specific_message_id}:
+ *   delete:
+ *     summary: MENSAJES DE PLATAFORMA - Eliminar mensaje específico
+ *     description: Elimina un mensaje específico (Todos los roles)
+ *     tags:
+ *       - Customer API - MENSAJES DE PLATAFORMA
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: specific_message_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Mensaje eliminado exitosamente
+ *       404:
+ *         description: Mensaje no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /platform/message/read/{specific_message_id}:
+ *   put:
+ *     summary: MENSAJES DE PLATAFORMA - Marcar como leído
+ *     description: Marca un mensaje como leído (Todos los roles)
+ *     tags:
+ *       - Customer API - MENSAJES DE PLATAFORMA
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: specific_message_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Mensaje marcado como leído
+ *       404:
+ *         description: Mensaje no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /platform/message/unread/{specific_message_id}:
+ *   put:
+ *     summary: MENSAJES DE PLATAFORMA - Marcar como no leído
+ *     description: Marca un mensaje como no leído (Todos los roles)
+ *     tags:
+ *       - Customer API - MENSAJES DE PLATAFORMA
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: specific_message_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Mensaje marcado como no leído
+ *       404:
+ *         description: Mensaje no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /vistas/profesionales:
+ *   get:
+ *     summary: EXPORTACIONES - Exportar profesionales a Excel
+ *     description: Exporta la información de profesionales a Excel (Owner/Operador)
+ *     tags:
+ *       - Customer API - EXPORTACIONES
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Archivo Excel generado exitosamente
+ *         content:
+ *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /vistas/reclamos/{status}:
+ *   get:
+ *     summary: EXPORTACIONES - Exportar reclamos a Excel
+ *     description: Exporta la información de reclamos a Excel (Owner/Operador)
+ *     tags:
+ *       - Customer API - EXPORTACIONES
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: status
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Estado de los reclamos
+ *         example: "PENDIENTE"
+ *     responses:
+ *       200:
+ *         description: Archivo Excel generado exitosamente
+ *         content:
+ *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       500:
+ *         description: Error interno del servidor
+ */

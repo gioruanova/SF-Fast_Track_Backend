@@ -7,16 +7,41 @@ const options = {
     info: {
       title: "Fast Track API",
       version: "1.0.1",
-      description: "Fast Track - API docs",
+      description: "Admin-Client-Public API documentation",
     },
-    tags: [{ name: "Super Admin" }, { name: "Clientes" }],
+    tags: [
+      { name: "Public API - LOGIN", description: "Endpoints públicos sin autenticación" },
+      { name: "Public API - MENSAJES PUBLICOS", description: "Endpoints públicos manejo de mensajes en sitio institucional" },
+      { name: "SuperAdmin API - EMPRESAS", description: "Gestión de empresas del sistema" },
+      { name: "SuperAdmin API - USUARIOS", description: "Gestión global de usuarios" },
+      { name: "SuperAdmin API - ESPECIALIDADES", description: "Gestión global de especialidades y asignaciones" },
+      { name: "SuperAdmin API - RECLAMOS", description: "Gestión global de reclamos" },
+      { name: "SuperAdmin API - MENSAJES PÚBLICOS", description: "Gestión de mensajes públicos recibidos" },
+      { name: "SuperAdmin API - CATEGORÍAS DE MENSAJES", description: "Gestión de categorías de mensajes" },
+      { name: "SuperAdmin API - LOGS GLOBALES", description: "Logs del sistema" },
+      { name: "SuperAdmin API - MENSAJES DE PLATAFORMA", description: "Mensajes internos de la plataforma" },
+
+      { name: "Customer API" },
+      { name: "Customer API - EMPRESA", description: "Gestión de información y configuración de la empresa" },
+      { name: "Customer API - USUARIOS", description: "Gestión de usuarios de la empresa" },
+      { name: "Customer API - ESPECIALIDADES", description: "Gestión de especialidades y asignaciones" },
+      { name: "Customer API - CLIENTES RECURRENTES", description: "Gestión de clientes recurrentes" },
+      { name: "Customer API - AGENDA", description: "Gestión de agenda y bloqueos" },
+      { name: "Customer API - RECLAMOS", description: "Gestión de reclamos" },
+      { name: "Customer API - WORKLOAD", description: "Fila de trabajo de profesionales" },
+      { name: "Customer API - LOGS", description: "Logs de la empresa" },
+      { name: "Customer API - FEEDBACK", description: "Envío de feedback a la plataforma" },
+      { name: "Customer API - MENSAJES DE PLATAFORMA", description: "Mensajes internos de la plataforma" },
+      { name: "Customer API - EXPORTACIONES", description: "Exportación de datos a Excel" }
+    ],
     servers: [
-      {
-        url: process.env.BACK_TEST_SITE,
-      },
       {
         url: process.env.BACK_TEST_SITE_2,
       },
+      {
+        url: process.env.BACK_TEST_SITE,
+      },
+
     ],
   },
   apis: ["./src/routes/*.js"],
@@ -25,3 +50,4 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options);
 
 module.exports = swaggerSpec;
+
