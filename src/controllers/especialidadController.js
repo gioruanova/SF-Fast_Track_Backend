@@ -73,6 +73,20 @@ async function updateEspecialidadAsAdmin(req, res) {
       .where({ id_especialidad: especialidadId })
       .first();
 
+          
+    const existente = await Especialidad.query()
+      .where({
+        company_id: especialidadExiste.company_id,
+        nombre_especialidad,
+      })
+      .first();
+
+    if (existente) {
+      return res
+        .status(409)
+        .json({ error: "La especialidad ya existe para esta empresa" });
+    }
+
     if (!especialidadExiste) {
       return res.status(404).json({ error: "Especialidad no encontrada" });
     } else {
@@ -83,6 +97,7 @@ async function updateEspecialidadAsAdmin(req, res) {
           company_id: especialidadExiste.company_id,
         });
     }
+
 
     /*LOGGER*/ await registrarNuevoLog(
       especialidadExiste.company_id,
@@ -138,7 +153,7 @@ async function disableEspecialidadAsAdmin(req, res) {
     if (!especialidadId) {
       return res
         .status(400)
-        .json({ error: "El campo nombre_especialidad es requerido" });
+        .json({ error: "El campo id_especialidad es requerido" });
     }
 
     const especialidadExiste = await Especialidad.query()
@@ -189,7 +204,7 @@ async function enableEspecialidadAsAdmin(req, res) {
     if (!especialidadId) {
       return res
         .status(400)
-        .json({ error: "El campo nombre_especialidad es requerido" });
+        .json({ error: "El campo id_especialidad es requerido" });
     }
 
     const especialidadExiste = await Especialidad.query()

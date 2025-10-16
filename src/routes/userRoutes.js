@@ -97,6 +97,7 @@ router.get(
   especialidadController.getAllEspecialidades
 );
 
+
 router.post(
   "/especialidades",
   authUserWithStatus("owner"),
