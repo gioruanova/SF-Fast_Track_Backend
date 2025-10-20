@@ -39,10 +39,12 @@ router.get(
 );
 router.get(
   "/company/config",
-  authUserWithStatus({ roles: ["owner", "operador", "profesional"], skipCompanyCheck: true }),
+  authUserWithStatus({
+    roles: ["owner", "operador", "profesional"],
+    skipCompanyCheck: true,
+  }),
   companyConfigController.getCompanySettingsByClient
 );
-
 
 router.put(
   "/company",
@@ -97,7 +99,6 @@ router.get(
   especialidadController.getAllEspecialidades
 );
 
-
 router.post(
   "/especialidades",
   authUserWithStatus("owner"),
@@ -142,10 +143,32 @@ router.get(
   authUserWithStatus("owner", "operador"),
   clientesRecurrentesController.getAllClientesRecurrentesAsClient
 );
+
 router.post(
   "/clientes-recurrentes",
   authUserWithStatus("owner", "operador"),
   clientesRecurrentesController.createClienteRecurrenteAsClient
+);
+
+// TODO: Documentar endpoint
+router.put(
+  "/clientes-recurrentes/:cliente_id",
+  authUserWithStatus("owner", "operador"),
+  clientesRecurrentesController.editarClienteAsClient
+);
+
+// TODO: Documentar endpoint
+router.put(
+  "/clientes-recurrentes/unblock/:cliente_id",
+  authUserWithStatus("owner", "operador"),
+  clientesRecurrentesController.activarClienteAsClient
+);
+
+// TODO: Documentar endpoint
+router.put(
+  "/clientes-recurrentes/block/:cliente_id",
+  authUserWithStatus("owner", "operador"),
+  clientesRecurrentesController.desactivarClienteAsClient
 );
 
 // Bloqueo de horarios en agenda
@@ -257,11 +280,11 @@ router.delete(
 );
 
 // Feedback
-  router.post(
-    "/platform/feedback",
-    authUserWithStatus("owner", "operador", "profesional"),
-    publicMEssageController.createFeedbackMessage
-  );
+router.post(
+  "/platform/feedback",
+  authUserWithStatus("owner", "operador", "profesional"),
+  publicMEssageController.createFeedbackMessage
+);
 
 // Mensajes globales
 router.get(

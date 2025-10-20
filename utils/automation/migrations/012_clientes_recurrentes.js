@@ -9,6 +9,7 @@ exports.up = function (knex) {
       table.string("cliente_direccion").nullable();
       table.decimal("cliente_lat", 10, 7).nullable();
       table.decimal("cliente_lng", 10, 7).nullable();
+      table.boolean("cliente_active").defaultTo(true);
 
       table.integer("company_id").unsigned().nullable();
       table

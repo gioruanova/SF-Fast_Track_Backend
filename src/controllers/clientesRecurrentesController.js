@@ -102,7 +102,138 @@ async function createClienteRecurrenteAsClient(req, res) {
   }
 }
 
+//  ---------------------------------------------------------
+// Actualizar cliente recurrente
+// ---------------------------------------------------------
+async function editarClienteAsClient(req, res) {
+  const company_id = req.user.company_id;
+  const { cliente_id } = req.params;
+
+  // Lista de campos que se pueden editar
+  const camposEditables = [
+    "cliente_complete_name",
+    "cliente_dni",
+    "cliente_phone",
+    "cliente_email",
+    "cliente_direccion",
+    "cliente_lat",
+    "cliente_lng",
+  ];
+
+  try {
+    // Buscar si el cliente existe y pertenece a la empresa
+    const cliente = await ClienteRecurrente.query()
+      .where({ cliente_id, company_id })
+      .first();
+
+    if (!cliente) {
+      return res.status(404).json({ error: "Cliente no encontrado" });
+    }
+
+    // Construyo objeto con solo los campos válidos y no vacíos
+    const datosActualizables = {};
+    for (const campo of camposEditables) {
+      if (req.body.hasOwnProperty(campo)) {
+        const valor = req.body[campo];
+
+        // Valido que no sea null, undefined ni string vacío
+        if (valor === null || valor === undefined || valor === "") {
+          return res.status(400).json({
+            error: `El campo '${campo}' no puede estar vacío si se envía.`,
+          });
+        }
+
+        datosActualizables[campo] = valor;
+      }
+    }
+
+    // Si no se envió ningún campo válido, corto
+    if (Object.keys(datosActualizables).length === 0) {
+      return res
+        .status(400)
+        .json({ error: "No se enviaron campos para actualizar." });
+    }
+
+    await ClienteRecurrente.query()
+      .patch(datosActualizables)
+      .where({ cliente_id, company_id });
+
+    return res.status(200).json({
+      success: true,
+      message: "Cliente actualizado correctamente",
+    });
+  } catch (error) {
+    console.error("editarCliente error:", error);
+    return res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+
+
+// ---------------------------------------------------------
+// Desactivar cliente recurrente
+// ---------------------------------------------------------
+async function desactivarClienteAsClient(req, res) {
+   const company_id = req.user.company_id;
+  const { cliente_id } = req.params;
+
+  try {
+    const cliente = await ClienteRecurrente.query()
+      .where({ cliente_id, company_id })
+      .first();
+
+    if (!cliente) {
+      return res.status(404).json({ error: "Cliente no encontrado" });
+    }
+
+    await ClienteRecurrente.query()
+      .patch({ cliente_active: false })
+      .where({ cliente_id, company_id });
+
+    return res.status(200).json({
+      success: true,
+      message: "Cliente desactivado correctamente",
+    });
+  } catch (error) {
+    console.error("desactivarCliente error:", error);
+    return res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+
+// ---------------------------------------------------------
+// Activar cliente recurrente
+// ---------------------------------------------------------
+
+async function activarClienteAsClient(req, res) {
+  const company_id = req.user.company_id;
+  const { cliente_id } = req.params;
+
+  try {
+    const cliente = await ClienteRecurrente.query()
+      .where({ cliente_id, company_id })
+      .first();
+
+    if (!cliente) {
+      return res.status(404).json({ error: "Cliente no encontrado" });
+    }
+
+    await ClienteRecurrente.query()
+      .patch({ cliente_active: true })
+      .where({ cliente_id, company_id });
+
+    return res.status(200).json({
+      success: true,
+      message: "Cliente activado correctamente",
+    });
+  } catch (error) {
+    console.error("activarCliente error:", error);
+    return res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+
 module.exports = {
   getAllClientesRecurrentesAsClient,
   createClienteRecurrenteAsClient,
+  editarClienteAsClient,
+  activarClienteAsClient,
+  desactivarClienteAsClient
 };
