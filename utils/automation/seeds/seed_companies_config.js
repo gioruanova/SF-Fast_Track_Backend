@@ -4,7 +4,24 @@ exports.seed = async function (knex) {
   await knex("companies_config").insert([
     {
       company_id: "1000",
-      sing_heading_profesional: "Especialista",
+      sing_heading_profesional: "Trabajador",
+      plu_heading_profesional: "Trabajdores",
+
+      sing_heading_especialidad: "Actividad",
+      plu_heading_especialidad: "Actividades",
+
+      sing_heading_owner: "Dueño",
+      plu_heading_owner: "Dueños",
+
+      sing_heading_solicitante:"Solicitante",
+      plu_heading_solicitante:"Solicitantes",
+
+      sing_heading_reclamos:"Solicitud",
+      plu_heading_reclamos:"Solicitudes",
+
+      
+      
+      
       string_inicio_reclamo_solicitante:
         "Hemos generado una gestión en base a su pedido. Adjunta encontrará la información pertinente al mismo:",
       string_recordatorio_reclamo_solicitante:

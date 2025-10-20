@@ -17,7 +17,7 @@ exports.seed = function (knex) {
           user_status: true,
         },
         {
-          user_complete_name: "Luis Gomez (owner)",
+          user_complete_name: "Luis Gomez -owner",
           user_email: "owner@gmail.com",
           user_dni: "12123123",
           user_phone: "+541123456789",
@@ -27,7 +27,7 @@ exports.seed = function (knex) {
           company_id: 1000,
         },
         {
-          user_complete_name: "Carlos Perez (owner)",
+          user_complete_name: "Carlos Perez - owner",
           user_email: "owner-2@gmail.com",
           user_dni: "45456456",
           user_phone: "+541198765432",
@@ -37,7 +37,7 @@ exports.seed = function (knex) {
           company_id: 1001,
         },
         {
-          user_complete_name: "Pedro Pascal (operador)",
+          user_complete_name: "Pedro Pascal -operador",
           user_email: "operador-1@gmail.com",
           user_dni: "78789789",
           user_phone: "+541112233445",
@@ -47,7 +47,7 @@ exports.seed = function (knex) {
           company_id: 1000,
         },
         {
-          user_complete_name: "Ana Torres (operador)",
+          user_complete_name: "Ana Torres -operador",
           user_email: "operador-2@gmail.com",
           user_dni: "65654654",
           user_phone: "+541198765432",
@@ -57,7 +57,7 @@ exports.seed = function (knex) {
           company_id: 1000,
         },
         {
-          user_complete_name: "Damian Suarez (profesional)",
+          user_complete_name: "Damian Suarez - profesional",
           user_email: "profesional-2@gmail.com",
           user_dni: "85854854",
           user_phone: "+541123123123",
@@ -67,7 +67,7 @@ exports.seed = function (knex) {
           company_id: 1000,
         },
         {
-          user_complete_name: "Marcos Perez (profesional)",
+          user_complete_name: "Marcos Perez - profesional",
           user_email: "profesional-1@gmail.com",
           user_dni: "78789789",
           user_phone: "+541112233445",
@@ -77,7 +77,7 @@ exports.seed = function (knex) {
           company_id: 1000,
         },
         {
-          user_complete_name: "Armando Cosas (profesional)",
+          user_complete_name: "Armando Cosas - profesional",
           user_email: "profesional-3@gmail.com",
           user_dni: "78789789",
           user_phone: "+541112233445",
