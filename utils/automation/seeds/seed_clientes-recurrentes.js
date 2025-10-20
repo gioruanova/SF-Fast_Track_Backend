@@ -19,6 +19,36 @@ exports.seed = function (knex) {
           cliente_lng: -58.396008763217424,
           company_id: 1000,
         },
+        {
+          cliente_complete_name: "Universidad Nacional CABA",
+          cliente_dni: "789012",
+          cliente_phone: "123456789",          
+          cliente_email: "cliente-abcd@gmailcom",
+          cliente_direccion: "LM Campos 2120",
+          cliente_lat: -34.604302546035875,
+          cliente_lng: -58.396008763217424,
+          company_id: 1000,
+        },
+        {
+          cliente_complete_name: "Luis Gomez (auditor dedicado",
+          cliente_dni: "654321",          
+          cliente_phone: "123456789",
+          cliente_email: "cliente-2@gmailcom",
+          cliente_direccion: "Belgrano 1500 capital federal",
+          cliente_lat: -34.61348577592298,
+          cliente_lng: -58.38739053913765,
+          company_id: 1001,
+        },
+        {
+          cliente_complete_name: "Empresa ABC",
+          cliente_dni: "45454456",
+          cliente_phone: "123456789",
+          cliente_email: "cliente-3@gmailcom",
+          cliente_direccion: "Av. Córdoba 4520",
+          cliente_lat: -34.594739735946966,
+          cliente_lng: -58.42954895880566,
+          company_id: 1002,
+        },
       ])
     );
 };
