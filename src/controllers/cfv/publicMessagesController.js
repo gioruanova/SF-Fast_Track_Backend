@@ -125,7 +125,6 @@ async function createPublicMessage(req, res) {
 // ---------------------------------------------------------
 async function createFeedbackMessage(req, res) {
   try {
-
     const { message_content } = req.body;
 
     if (!message_content) {
@@ -144,7 +143,6 @@ async function createFeedbackMessage(req, res) {
       category_id: 0,
       category_original: "Feedback",
     });
-
 
     return res
       .status(201)
@@ -182,6 +180,8 @@ async function gettAlMessagesAsAdmin(req, res) {
 // Marcar mensaje como leido
 // ---------------------------------------------------------
 async function markMessageAsReadAsAdmin(req, res) {
+  console.log('aca');
+  
   try {
     const { message_id } = req.params;
 

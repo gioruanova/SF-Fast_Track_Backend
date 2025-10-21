@@ -18,7 +18,7 @@ const reclamoController = require("../controllers/reclamoController");
 
 const globalLogController = require("../controllers/globalLogController");
 const messageController = require("../controllers/messageController");
-const { getAllClientesRecurrentesAsAdmin } = require("../controllers/clientesRecurrentesController");
+const siteBannerController = require("../controllers/siteBannerController");
 
 // =======================
 // Middleware global para rutas protegidas
@@ -26,6 +26,14 @@ router.use(authSuperadmin);
 
 // =======================
 // Rutas protegidas
+
+
+router.get("/banners", siteBannerController.getBannersAsAdmin);
+router.post("/banners", siteBannerController.createBanner);
+router.put("/banners/:banner_id", siteBannerController.editBanner);
+router.delete("/banners/:banner_id", siteBannerController.deleteBanner);
+router.put("/banners/enable/:banner_id", siteBannerController.enableBanner);
+router.put("/banners/disable/:banner_id", siteBannerController.disableBanner);
 // Mensajes publicos
 router.get("/messages", publicMessagesController.gettAlMessagesAsAdmin);
 router.put("/messages/read/:message_id", publicMessagesController.markMessageAsReadAsAdmin);

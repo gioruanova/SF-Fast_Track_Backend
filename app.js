@@ -38,7 +38,8 @@ const corsOptions = {
     process.env.BACK_TEST_SITE, 
     process.env.BACK_TEST_SITE_2, 
     process.env.BACK_TEST_SITE_3, 
-    process.env.BACK_TEST_SITE_4
+    process.env.BACK_TEST_SITE_4,
+    process.env.BACK_TEST_SITE_5
   ].filter(Boolean),
   credentials: true,
   methods: ["GET", "PUT", "POST", "DELETE"],

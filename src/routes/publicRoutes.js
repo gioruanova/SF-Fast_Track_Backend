@@ -161,7 +161,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /messages:
+ * /publicApi/messages:
  *   post:
  *     summary: Crear mensaje público
  *     description: Permite a usuarios anónimos enviar mensajes de contacto desde el sitio web público

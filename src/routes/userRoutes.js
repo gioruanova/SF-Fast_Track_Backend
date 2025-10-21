@@ -20,12 +20,20 @@ const globalLogController = require("../controllers/globalLogController");
 const publicMEssageController = require("../controllers/cfv/publicMessagesController");
 const messageController = require("../controllers/messageController");
 
-// // utilitarios
+// utilitarios
 const exportProfesionalesController = require("../../utils/exports/exportProfesionalesController");
 const exportReclamosController = require("../../utils/exports/exportReclamosController");
+const siteBannerController = require("../controllers/siteBannerController");
 
 // =======================
 // Rutas protegidas
+
+// gestion banner
+router.get(
+  "/active-banner",
+  authUserWithStatus("owner", "operador", "profesional"),
+  siteBannerController.getActiveBanner
+);
 // Manejo de company
 router.get(
   "/company/companyInfo",

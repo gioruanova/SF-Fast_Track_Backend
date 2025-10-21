@@ -24,6 +24,7 @@ const seeders = [
   "seed_especialidades.js",
   "seed_messages_categories.js",
   "seed_clientes-recurrentes.js",
+  "seed_site-banner.js",
 ];
 
 async function runSeeders() {
