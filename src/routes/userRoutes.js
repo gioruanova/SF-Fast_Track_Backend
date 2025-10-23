@@ -349,7 +349,7 @@ router.get(
 );
 
 // =======================
-// Rutas de notificaciones
+// Rutas de notificaciones // pending documentation here
 router.get(
   "/notifications/vapid-public-key",
   authUserWithStatus(),
