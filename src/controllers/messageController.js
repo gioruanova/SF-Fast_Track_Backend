@@ -38,6 +38,13 @@ async function createMessageForAllAsAdmin(req, res) {
 
     await knex.batchInsert("platform_messages_users", entries);
 
+    for (const entry of entries) {
+      const user = await User.query().findById(entry.user_id);
+      if (user) {
+        await sendNotificationToUser(entry.user_id,"Nuevo mensaje",platform_message_title,{title: "Fast Track",role: user.user_role},`/dashboard/${user.user_role}/mensajes`);
+      }
+    }
+
     res
       .status(201)
       .json({ message: "Mensaje creado para todos los usuarios." });
@@ -46,7 +53,7 @@ async function createMessageForAllAsAdmin(req, res) {
   }
 }
 // ---------------------------------------------------------
-// Enviar mensaje para toda la empresa
+// Enviar mensaje para owner de empresa
 // ---------------------------------------------------------
 async function createMessageForCompanyAsAdmin(req, res) {
   const { platform_message_title, platform_message_content } = req.body;
@@ -64,9 +71,10 @@ async function createMessageForCompanyAsAdmin(req, res) {
     });
 
     const users = await User.query()
-      .select("user_id")
+      .select()
       .where("company_id", company_id)
-      .andWhere("user_role", "owner");
+      .andWhere("user_role", "owner",).groupBy("user_id");
+
 
     const entries = users.map((user) => ({
       platform_message_id: message.platform_message_id,
@@ -76,6 +84,16 @@ async function createMessageForCompanyAsAdmin(req, res) {
 
     await knex.batchInsert("platform_messages_users", entries);
 
+    for (const userSelected of users) {
+      const user = await User.query().findById(userSelected.user_id);
+      if (user) {
+        await sendNotificationToUser(userSelected.user_id, "Nuevo mensaje", platform_message_title, {
+          title: "Fast Track", role: user.user_role
+        },
+          `/dashboard/${user.user_role}/mensajes`
+        );
+      }
+    }
 
     res.status(201).json({ message: "Mensaje creado unicamente para owners." });
   } catch (error) {
@@ -169,7 +187,7 @@ async function createMessageForCompanyAsClient(req, res) {
     });
 
     const users = await User.query()
-      .select("user_id")
+      .select()
       .where("company_id", company_id);
 
     const entries = users.map((user) => ({
@@ -187,6 +205,16 @@ async function createMessageForCompanyAsClient(req, res) {
       "."
     );
 
+    for (const userSelected of users) {
+      const user = await User.query().findById(userSelected.user_id);
+      if (user) {
+        await sendNotificationToUser(userSelected.user_id, "Nuevo mensaje", platform_message_title, {
+          title: "Fast Track", role: user.user_role
+        },
+          `/dashboard/${user.user_role}/mensajes`
+        );
+      }
+    }
     res
       .status(201)
       .json({ message: "Mensaje creado para todos los usuarios." });

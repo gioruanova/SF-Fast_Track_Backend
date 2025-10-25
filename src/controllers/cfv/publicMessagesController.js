@@ -5,7 +5,9 @@ const {
 
 const PublicMessageCategory = require("../../models/cfv/PublicMessageCategory");
 const path = require("path");
-const { loginUser } = require("../../services/authUserService");
+const { sendNotificationToUser } = require("../notificationController");
+const User = require("../../models/User");
+
 
 // CONTROLADORES PUBLIC:
 // ---------------------------------------------------------
@@ -109,6 +111,14 @@ async function createPublicMessage(req, res) {
       category_original: categoria.category_name,
     });
 
+    const superaAdmins = await User.query().select().where("user_role", "superadmin");
+    for (const sa of superaAdmins) {
+      const user = await User.query().findById(sa.user_id);
+      if (user) {
+        await sendNotificationToUser(sa.user_id,"Nuevo contacto",`Nuevo mensaje externo en ${categoria.category_name}`,{title: "Fast Track"},`/dashboard/${user.user_role}/mensajes`);
+      }
+    }
+
     return res
       .status(201)
       .json({ success: true, message: "Mensaje creado correctamente" });
@@ -124,6 +134,7 @@ async function createPublicMessage(req, res) {
 // Traer todos los mensajes
 // ---------------------------------------------------------
 async function createFeedbackMessage(req, res) {
+
   try {
     const { message_content } = req.body;
 
@@ -143,6 +154,15 @@ async function createFeedbackMessage(req, res) {
       category_id: 0,
       category_original: "Feedback",
     });
+
+    const superaAdmins = await User.query().select().where("user_role", "superadmin");
+    
+    for (const sa of superaAdmins) {
+      const user = await User.query().findById(sa.user_id);
+      if (user) {
+        await sendNotificationToUser(sa.user_id,"Feedback recibido", `Feedback recibido de ${req.user.company_name}`, { title: "Fast Track" }, `/dashboard/${user.user_role}/mensajes`);
+      }
+    }
 
     return res
       .status(201)
@@ -181,7 +201,7 @@ async function gettAlMessagesAsAdmin(req, res) {
 // ---------------------------------------------------------
 async function markMessageAsReadAsAdmin(req, res) {
   console.log('aca');
-  
+
   try {
     const { message_id } = req.params;
 

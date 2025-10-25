@@ -10,6 +10,7 @@ const companyConfigController = require("./companyConfigController");
 
 const { registrarNuevoLog } = require("../controllers/globalLogController");
 const { update } = require("../db/knex");
+const { sendNotificationToUser } = require("./notificationController");
 
 // CONTROLADORES PARA ADMIN:
 // ---------------------------------------------------------
@@ -136,11 +137,18 @@ async function createReclamo(req, res) {
     });
 
     simulacionEnvioEmailReclamoInicial(nuevoReclamo);
+    sendNotificationToUser(nuevoReclamo.profesional_id,
+      `Asignacion de ${companyConfig.sing_heading_reclamos}`,
+      `Detalle: ${nuevoReclamo.reclamo_titulo} - 
+      Programado para ${data.agenda_fecha} a las ${data.agenda_hora_desde}
+      `,
+      { title: "Fast Track" },
+      `/dashboard/profesional/trabajar-reclamos`);
 
     /*LOGGER*/ await registrarNuevoLog(
-      company_id,
-      `Se ha generado un nuevo reclamo con el ID: ${nuevoReclamo.reclamo_id}`
-    );
+        company_id,
+        `Se ha generado un nuevo reclamo con el ID: ${nuevoReclamo.reclamo_id}`
+      );
 
     return res
       .status(201)
@@ -222,6 +230,16 @@ async function updateReclamoAsClient(req, res) {
         reclamo_estado,
       }
     );
+
+    const companyConfig = await companyConfigController.fetchCompanySettingsByCompanyId(reclamoExiste.company_id);
+
+
+    sendNotificationToUser(
+      reclamoExiste.profesional_id,
+      `Actualizaciones en  ${companyConfig.sing_heading_reclamos}`,
+      `Detalle ${companyConfig.sing_heading_reclamos} nro: ${reclamoExiste.reclamo_id} - ${reclamoExiste.reclamo_titulo}`,
+      { title: "Fast Track" },
+      `/dashboard/profesional/trabajar-reclamos`);
 
     simulacionEnvioEmailReclamoActualizacion(reclamoActualizado);
 
@@ -306,9 +324,28 @@ async function updateReclamoAsProfesional(req, res) {
     );
 
     if (reclamoActualizado) {
+
       const resultado = await fetchReclamosByCompanyId(companyId, user_id);
 
       simulacionEnvioEmailReclamoActualizacion(reclamoActualizado);
+
+
+      const companyConfig = await companyConfigController.fetchCompanySettingsByCompanyId(reclamoExiste.company_id);
+      const compUsers = await User.query().select().where("user_role", "superadmin");
+
+      for (const cu of compUsers) {
+        const user = await User.query().findById(cu.user_id);
+        if (user) {
+          await sendNotificationToUser(
+            cu.user_id,
+            `Actualizaciones en ${companyConfig.sing_heading_reclamos}`,
+            `${companyConfig.sing_heading_reclamos} nro: ${reclamoExiste.reclamo_id} - ${reclamoExiste.reclamo_titulo}`,
+            { title: "Fast Track" },
+            `${reclamoActualizado.reclamo_estado == "CERRADO" || reclamoActualizado.reclamo_estado == "CANCELADO" ? `/dashboard/operador/historial-reclamos` : `/dashboard/operador/trabajar-reclamos`}`);
+        }
+      }
+
+
       res.json({
         status: 200,
         message: "Reclamo actualizado correctamente",

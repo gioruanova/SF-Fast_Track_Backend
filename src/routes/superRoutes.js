@@ -19,7 +19,7 @@ const reclamoController = require("../controllers/reclamoController");
 const globalLogController = require("../controllers/globalLogController");
 const messageController = require("../controllers/messageController");
 const siteBannerController = require("../controllers/siteBannerController");
-
+const notificationController = require("../controllers/notificationController");
 // =======================
 // Middleware global para rutas protegidas
 router.use(authSuperadmin);
@@ -101,6 +101,32 @@ router.post("/platform/messages", messageController.createMessageForAllAsAdmin);
 router.post("/platform/messages/company/:company_id", messageController.createMessageForCompanyAsAdmin);
 router.post("/platform/messages/user/:user_id", messageController.createMessageForUserAsAdmin);
 router.delete("/platform/messages/:platform_message_id", messageController.deleteMessageAsAdmin);
+
+
+// =======================
+// Rutas de notificaciones // pending documentation here
+router.get(
+    "/notifications/vapid-public-key",
+    notificationController.getVapidPublicKey
+);
+router.post(
+    "/notifications/register-token",
+    notificationController.registerToken
+);
+router.post(
+    "/notifications/send",
+    notificationController.sendNotification
+);
+router.delete(
+    "/notifications/unregister-token",
+    notificationController.unregisterToken
+);
+router.delete(
+    "/notifications/unregister-specific-token",
+    notificationController.unregisterSpecificToken
+);
+
+
 
 module.exports = router;
 
@@ -2370,8 +2396,8 @@ module.exports = router;
  * @swagger
  * /superApi/platform/messages/company/{company_id}:
  *   post:
- *     summary: MENSAJES DE PLATAFORMA - Crear para empresa específica
- *     description: Crea un mensaje para todos los usuarios de una empresa específica
+ *     summary: MENSAJES DE PLATAFORMA - Crear para empresa
+ *     description: Crea un mensaje para para los owners de una empresa específica
  *     tags:
  *       - SuperAdmin API - MENSAJES DE PLATAFORMA
  *     security:

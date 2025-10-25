@@ -25,7 +25,6 @@ async function registerToken(req, res) {
     const { subscription, platform } = req.body;
     const { user_id } = req.user;
 
-    // Verificar si ya existe
     const existing = await UserNotificationSubscription.query()
       .where('user_id', user_id)
       .where('subscription', JSON.stringify(subscription))
@@ -35,7 +34,6 @@ async function registerToken(req, res) {
       return res.json({ success: true, message: 'Token ya registrado' });
     }
 
-    // Crear nueva subscription
     await UserNotificationSubscription.query().insert({
       user_id,
       subscription: JSON.stringify(subscription),
@@ -67,7 +65,6 @@ async function unregisterToken(req, res) {
   try {
     const { user_id } = req.user;
 
-    // Eliminar todas las suscripciones del usuario
     await UserNotificationSubscription.query()
       .where('user_id', user_id)
       .delete();
@@ -85,7 +82,6 @@ async function unregisterSpecificToken(req, res) {
     const { user_id } = req.user;
     const { subscription } = req.body;
 
-    // Eliminar suscripción específica
     const deleted = await UserNotificationSubscription.query()
       .where('user_id', user_id)
       .where('subscription', JSON.stringify(subscription))
@@ -119,7 +115,6 @@ async function sendNotificationToUser(userId, titleMessage, message, options = {
       path: path || null
     };
 
-    // Obtener subscriptions del usuario
     const subscriptions = await UserNotificationSubscription.query()
       .where('user_id', userId)
       .where('is_active', true);
@@ -128,7 +123,6 @@ async function sendNotificationToUser(userId, titleMessage, message, options = {
       return { success: false, message: 'Usuario sin subscriptions activas' };
     }
 
-    // Enviar a todas las subscriptions
     const results = [];
     for (const subscription of subscriptions) {
       try {
@@ -139,7 +133,6 @@ async function sendNotificationToUser(userId, titleMessage, message, options = {
         results.push({ success: true, subscription: subscription.id });
       } catch (error) {
         console.error('Error enviando a subscription:', error);
-        // Marcar subscription como inactiva si falla
         await UserNotificationSubscription.query()
           .findById(subscription.id)
           .patch({ is_active: false });
