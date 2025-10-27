@@ -63,11 +63,11 @@ async function assignEspecialidadAsAdmin(req, res) {
     /*LOGGER*/ await registrarNuevoLog(
       profesionalExiste.company_id,
       "Se ha asignado la especialidad: " +
-        especialidadExiste.nombre_especialidad +
-        " al profesional: " +
-        profesionalExiste.first_name +
-        " " +
-        profesionalExiste.last_name
+      especialidadExiste.nombre_especialidad +
+      " al profesional: " +
+      profesionalExiste.first_name +
+      " " +
+      profesionalExiste.last_name
     );
     return res
       .status(201)
@@ -104,9 +104,9 @@ async function deleteEspecialidadAsAdmin(req, res) {
     /*LOGGER*/ await registrarNuevoLog(
       profesionalEspecialidadExiste.company_id,
       "Se ha eliminado la especialidad: " +
-        profesionalEspecialidadExiste.id_especialidad +
-        " del profesional: " +
-        profesionalEspecialidadExiste.id_usuario
+      profesionalEspecialidadExiste.id_especialidad +
+      " del profesional: " +
+      profesionalEspecialidadExiste.id_usuario
     );
     return res
       .status(201)
@@ -176,12 +176,12 @@ async function editAsignacionEspecialidadAsAdmin(req, res) {
       .patch({ id_especialidad: especialidad_id });
 
     /*LOGGER*/ await registrarNuevoLog(
-      profesionalEspecialidadExiste.company_id,
-      "Se ha actualizado la especialidad: " +
+        profesionalEspecialidadExiste.company_id,
+        "Se ha actualizado la especialidad: " +
         profesionalEspecialidadExiste.id_especialidad +
         " del profesional: " +
         profesionalEspecialidadExiste.id_usuario
-    );
+      );
     return res
       .status(201)
       .json({ message: "Asignacion actualizada correctamente" });
@@ -258,12 +258,12 @@ async function assignEspecialidadAsClient(req, res) {
     /*LOGGER*/ await registrarNuevoLog(
       company_id,
       "Se ha asignado la especialidad: " +
-        especialidad_id +
-        " al profesional: " +
-        profesional_id +
-        ". (Ejecutado por " +
-        req.user.user_name +
-        ")."
+      especialidad_id +
+      " al profesional: " +
+      profesional_id +
+      ". (Ejecutado por " +
+      req.user.user_name +
+      ")."
     );
     return res
       .status(201)
@@ -296,12 +296,12 @@ async function deleteEspecialidadAsClient(req, res) {
     /*LOGGER*/ await registrarNuevoLog(
       company_id,
       "Se ha eliminado la especialidad: " +
-        profesionalEspecialidadExiste.id_especialidad +
-        " del profesional: " +
-        profesionalEspecialidadExiste.id_usuario +
-        ". (Ejecutado por " +
-        req.user.user_name +
-        ")."
+      profesionalEspecialidadExiste.id_especialidad +
+      " del profesional: " +
+      profesionalEspecialidadExiste.id_usuario +
+      ". (Ejecutado por " +
+      req.user.user_name +
+      ")."
     );
     return res
       .status(201)
@@ -368,15 +368,15 @@ async function editAsignacionEspecialidadAsClient(req, res) {
       .patch({ id_especialidad: especialidad_id });
 
     /*LOGGER*/ await registrarNuevoLog(
-      company_id,
-      "Se ha editado la especialidad: " +
+        company_id,
+        "Se ha editado la especialidad: " +
         profesionalEspecialidadExiste.id_especialidad +
         " del profesional: " +
         profesionalEspecialidadExiste.id_usuario +
         ". (Ejecutado por " +
         req.user.user_name +
         ")."
-    );
+      );
     return res.status(201).json({
       message: "Asignacion editada correctamente",
     });
@@ -385,11 +385,38 @@ async function editAsignacionEspecialidadAsClient(req, res) {
   }
 }
 
+async function getProfesionalEspecialidadAsClient(req, res) {
+  const company_id = req.user?.company_id;
+  
+  try {
+    if (!company_id) {
+      return res.status(400).json({ error: "Company ID no encontrado" });
+    }
+    
+    const profesionalEspecialidad = await ProfesionalEspecialidad.query()
+      .select(
+        'profesionales_especialidad.id_usuario as profesional_id',
+        'usuario.user_complete_name as profesional_nombre',
+        'profesionales_especialidad.id_especialidad as especialidad_id',
+        'Especialidad.nombre_especialidad as especialidad_nombre'
+      )
+      .join('users as usuario', 'profesionales_especialidad.id_usuario', 'usuario.user_id')
+      .join('especialidades as Especialidad', 'profesionales_especialidad.id_especialidad', 'Especialidad.id_especialidad')
+      .where('profesionales_especialidad.company_id', company_id);
+    
+    return res.json(profesionalEspecialidad);
+  } catch (error) {
+    return res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+
+
 module.exports = {
   assignEspecialidadAsAdmin,
   deleteEspecialidadAsAdmin,
   editAsignacionEspecialidadAsAdmin,
 
+  getProfesionalEspecialidadAsClient,
   assignEspecialidadAsClient,
   deleteEspecialidadAsClient,
   editAsignacionEspecialidadAsClient,

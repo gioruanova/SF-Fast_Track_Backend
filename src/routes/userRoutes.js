@@ -14,6 +14,7 @@ const profesionalEspecialidadController = require("../controllers/profesionalEsp
 const reclamoController = require("../controllers/reclamoController");
 const clientesRecurrentesController = require("../controllers/clientesRecurrentesController");
 const agendaBloquedaController = require("../controllers/agendaBloquedaController");
+const agendaReclamoController = require("../controllers/agendaReclamoController");
 const disponibilidadController = require("../controllers/disponibilidadController");
 
 const globalLogController = require("../controllers/globalLogController");
@@ -129,6 +130,13 @@ router.post(
   authUserWithStatus("owner", "operador"),
   profesionalEspecialidadController.assignEspecialidadAsClient
 );
+
+router.get(
+  "/asignaciones",
+  authUserWithStatus("owner", "operador"),
+  profesionalEspecialidadController.getProfesionalEspecialidadAsClient
+);
+
 router.delete(
   "/profesionalEspecialidad/:id_asignacion",
   authUserWithStatus("owner", "operador"),
@@ -179,6 +187,12 @@ router.get(
   "/agenda",
   authUserWithStatus("owner", "operador"),
   agendaBloquedaController.getAllAgendaBloqueadaAsClient
+);
+
+router.get(
+  "/reclamos/agendaReclamo",
+  authUserWithStatus("owner", "operador"),
+  agendaReclamoController.getAgendaReclamo
 );
 router.post(
   "/agendaBloqueada/:user_id",
@@ -783,7 +797,7 @@ module.exports = router;
  * @swagger
  * /customersApi/especialidades:
  *   get:
- *     summary: ESPECIALIDADES - Listar de la empresa
+ *     summary: ESPECIALIDADES - Obtener asignaciones
  *     description: Obtiene especialidades de la empresa (Owner/Operador)
  *     tags:
  *       - Customer API - ESPECIALIDADES
@@ -2538,4 +2552,95 @@ module.exports = router;
  *                 error:
  *                   type: string
  *                   example: "Error al desregistrar el token específico"
+ */
+
+
+/**
+ * @swagger
+ * /customersApi/asignaciones:
+ *   get:
+ *     summary: ESPECIALIDADES - Obtener asignaciones
+ *     description: Obtiene todas las asignaciones de especialidades a profesionales de la empresa (Owner/Operador)
+ *     tags:
+ *       - Customer API - ESPECIALIDADES
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de asignaciones obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   profesional_id:
+ *                     type: integer
+ *                     description: ID del profesional
+ *                     example: 123
+ *                   profesional_nombre:
+ *                     type: string
+ *                     description: Nombre completo del profesional
+ *                     example: "Juan Pérez"
+ *                   especialidad_id:
+ *                     type: integer
+ *                     description: ID de la especialidad
+ *                     example: 456
+ *                   especialidad_nombre:
+ *                     type: string
+ *                     description: Nombre de la especialidad
+ *                     example: "Cardiología"
+ *       400:
+ *         description: Company ID no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+
+/**
+ * @swagger
+ * /customersApi/reclamos/agendaReclamo:
+ *   get:
+ *     summary: RECLAMOS - Obtener agenda de reclamos
+ *     description: Obtiene la agenda de reclamos de la empresa con información de profesionales y especialidades (Owner/Operador)
+ *     tags:
+ *       - Customer API - RECLAMOS
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de agenda de reclamos obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   profesional_id:
+ *                     type: integer
+ *                     description: ID del profesional asignado
+ *                     example: 123
+ *                   especialidad_id:
+ *                     type: integer
+ *                     description: ID de la especialidad del reclamo
+ *                     example: 456
+ *                   agenda_fecha:
+ *                     type: string
+ *                     format: date
+ *                     description: Fecha de la agenda
+ *                     example: "2024-01-15"
+ *                   agenda_hora_desde:
+ *                     type: string
+ *                     pattern: "^(\\d|[01]\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?$"
+ *                     description: Hora de inicio de la agenda
+ *                     example: "09:00"
+ *                   agenda_hora_hasta:
+ *                     type: string
+ *                     pattern: "^(\\d|[01]\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?$"
+ *                     description: Hora de fin de la agenda
+ *                     example: "10:00"
+ *       500:
+ *         description: Error interno del servidor
  */

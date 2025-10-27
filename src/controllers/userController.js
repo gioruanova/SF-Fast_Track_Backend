@@ -542,7 +542,8 @@ async function getUsersAsClient(req, res) {
         "user_status",
         "company_id",
         "created_at",
-        "updated_at"
+        "updated_at",
+        "apto_recibir"
       )
       .where("company_id", companyId)
       .withGraphFetched("especialidades.Especialidad(selectNombreEspecialidad)")
