@@ -12,9 +12,24 @@ const companyConfigController = require("./companyConfigController");
 const messageController = require("./messageController");
 
 const { registrarNuevoLog } = require("../controllers/globalLogController");
-const { enviarLista, enviarExito, enviarError, enviarNoEncontrado, enviarSolicitudInvalida, enviarSinPermiso, enviarConflicto } = require("../helpers/responseHelpers");
-const { obtenerPorId, verificarDuplicado } = require("../helpers/registroHelpers");
-const { validarCamposObligatorios, filtrarCamposPermitidos, validarUserRole } = require("../helpers/validationHelpers");
+const {
+  enviarLista,
+  enviarExito,
+  enviarError,
+  enviarNoEncontrado,
+  enviarSolicitudInvalida,
+  enviarSinPermiso,
+  enviarConflicto,
+} = require("../helpers/responseHelpers");
+const {
+  obtenerPorId,
+  verificarDuplicado,
+} = require("../helpers/registroHelpers");
+const {
+  validarCamposObligatorios,
+  filtrarCamposPermitidos,
+  validarUserRole,
+} = require("../helpers/validationHelpers");
 
 // -----------------
 // CONTROLADORES PARA ADMIN:
@@ -36,8 +51,18 @@ async function createUserAsAdmin(req, res) {
 
   try {
     // Validar campos base requeridos
-    const camposBaseRequeridos = ["user_complete_name", "user_dni", "user_phone", "user_email", "user_password", "user_role"];
-    const validacionBase = validarCamposObligatorios(req.body, camposBaseRequeridos);
+    const camposBaseRequeridos = [
+      "user_complete_name",
+      "user_dni",
+      "user_phone",
+      "user_email",
+      "user_password",
+      "user_role",
+    ];
+    const validacionBase = validarCamposObligatorios(
+      req.body,
+      camposBaseRequeridos
+    );
     if (!validacionBase.valid) {
       return enviarSolicitudInvalida(res, validacionBase.error);
     }
@@ -45,13 +70,19 @@ async function createUserAsAdmin(req, res) {
     // Validar y normalizar user_role
     const validacionRole = validarUserRole(user_role);
     if (!validacionRole.valid) {
-      return enviarSolicitudInvalida(res, "El rol de usuario no es válido. Roles permitidos: superadmin, owner, operador, profesional");
+      return enviarSolicitudInvalida(
+        res,
+        "El rol de usuario no es válido. Roles permitidos: superadmin, owner, operador, profesional"
+      );
     }
 
     // Si NO es superadmin, company_id es requerido
     if (validacionRole.normalized !== "superadmin") {
       if (!company_id) {
-        return enviarSolicitudInvalida(res, "company_id es requerido para roles que no sean superadmin");
+        return enviarSolicitudInvalida(
+          res,
+          "company_id es requerido para roles que no sean superadmin"
+        );
       }
       const company = await obtenerPorId(Company, company_id);
       if (!company) {
@@ -76,15 +107,16 @@ async function createUserAsAdmin(req, res) {
       user_email,
       user_password: bcrypt.hashSync(user_password, saltRounds),
       user_role: validacionRole.normalized,
-      company_id: validacionRole.normalized === "superadmin" ? null : company_id,
+      company_id:
+        validacionRole.normalized === "superadmin" ? null : company_id,
     });
 
     /*LOGGER*/ await registrarNuevoLog(
       newUser.company_id,
       "El usuario " +
-      newUser.user_complete_name +
-      " ha sido creado" +
-      " (Ejecutado por Sistema)"
+        newUser.user_complete_name +
+        " ha sido creado" +
+        " (Ejecutado por Sistema)"
     );
 
     return enviarExito(res, "Usuario creado correctamente", 201);
@@ -115,14 +147,24 @@ async function editUserAsAdmin(req, res) {
       return enviarSolicitudInvalida(res, "No existe usuario bajo ese ID");
     }
 
-    const { data: patchData, hasEmpty, empty: camposVacios } = filtrarCamposPermitidos(req.body, allowedFields, true);
+    const {
+      data: patchData,
+      hasEmpty,
+      empty: camposVacios,
+    } = filtrarCamposPermitidos(req.body, allowedFields, true);
 
     if (hasEmpty) {
-      return enviarSolicitudInvalida(res, `El campo ${camposVacios.join(', ')} no puede estar vacío`);
+      return enviarSolicitudInvalida(
+        res,
+        `El campo ${camposVacios.join(", ")} no puede estar vacío`
+      );
     }
 
     if (Object.keys(patchData).length === 0) {
-      return enviarSolicitudInvalida(res, "No se proporcionaron campos para actualizar");
+      return enviarSolicitudInvalida(
+        res,
+        "No se proporcionaron campos para actualizar"
+      );
     }
 
     if (patchData.company_id) {
@@ -133,14 +175,22 @@ async function editUserAsAdmin(req, res) {
     }
 
     if (patchData.user_email) {
-      const existe = await verificarDuplicado(User, { user_email: patchData.user_email }, user_id);
+      const existe = await verificarDuplicado(
+        User,
+        { user_email: patchData.user_email },
+        user_id
+      );
       if (existe) {
         return enviarConflicto(res, "El email ya está registrado");
       }
     }
 
     if (patchData.user_dni) {
-      const existe = await verificarDuplicado(User, { user_dni: patchData.user_dni }, user_id);
+      const existe = await verificarDuplicado(
+        User,
+        { user_dni: patchData.user_dni },
+        user_id
+      );
       if (existe) {
         return enviarConflicto(res, "El DNI ya está registrado");
       }
@@ -164,9 +214,9 @@ async function editUserAsAdmin(req, res) {
     /*LOGGER*/ await registrarNuevoLog(
       user.company_id,
       "El usuario " +
-      user.user_complete_name +
-      " ha sido editado." +
-      " (Ejecutado por Sistema)"
+        user.user_complete_name +
+        " ha sido editado." +
+        " (Ejecutado por Sistema)"
     );
 
     return enviarExito(res, "Usuario editado correctamente");
@@ -232,9 +282,9 @@ async function blockUserAsAdmin(req, res) {
     /*LOGGER*/ await registrarNuevoLog(
       userToBlock.company_id,
       "El usuario " +
-      userToBlock.user_complete_name +
-      " ha sido bloqueado." +
-      " (Ejecutado por Sistema)"
+        userToBlock.user_complete_name +
+        " ha sido bloqueado." +
+        " (Ejecutado por Sistema)"
     );
 
     return enviarExito(res, "Usuario bloqueado correctamente");
@@ -261,9 +311,9 @@ async function unblockUserAsAdmin(req, res) {
     /*LOGGER*/ await registrarNuevoLog(
       userToUnblock.company_id,
       "El usuario " +
-      userToUnblock.user_complete_name +
-      " ha sido desbloqueado." +
-      " (Ejecutado por Sistema)"
+        userToUnblock.user_complete_name +
+        " ha sido desbloqueado." +
+        " (Ejecutado por Sistema)"
     );
 
     return enviarExito(res, "Usuario desbloqueado correctamente");
@@ -281,7 +331,10 @@ async function restoreUserAsAdmin(req, res) {
     const { new_password } = req.body;
 
     if (!new_password) {
-      return enviarSolicitudInvalida(res, "Debes ingresar una nueva contraseña");
+      return enviarSolicitudInvalida(
+        res,
+        "Debes ingresar una nueva contraseña"
+      );
     }
 
     const userToRestore = await obtenerPorId(User, user_id);
@@ -290,7 +343,10 @@ async function restoreUserAsAdmin(req, res) {
     }
 
     if (userToRestore.user_status === 1) {
-      return enviarSolicitudInvalida(res, "El usuario ya se encuentra habilitado");
+      return enviarSolicitudInvalida(
+        res,
+        "El usuario ya se encuentra habilitado"
+      );
     }
 
     await resetPassword(user_id, new_password);
@@ -298,7 +354,8 @@ async function restoreUserAsAdmin(req, res) {
 
     await messageController.createMessageCustom({
       platform_message_title: "Cuenta reestablecida",
-      platform_message_content: "Hemos restablecido tu cuenta con una contraseña provisoria. Te recomendamos cambiarla por una más segura desde la seccion de tu Perfil.",
+      platform_message_content:
+        "Hemos restablecido tu cuenta con una contraseña provisoria. Te recomendamos cambiarla por una más segura desde la seccion de tu Perfil.",
       user_id: userToRestore.user_id,
       company_id: userToRestore.company_id,
       company_name: userToRestore.company_name,
@@ -307,9 +364,9 @@ async function restoreUserAsAdmin(req, res) {
     /*LOGGER*/ await registrarNuevoLog(
       userToRestore.company_id,
       "El usuario " +
-      userToRestore.user_complete_name +
-      " ha sido desbloqueado y la contraseña ha sido reestablecida." +
-      " (Ejecutado por Sistema)"
+        userToRestore.user_complete_name +
+        " ha sido desbloqueado y la contraseña ha sido reestablecida." +
+        " (Ejecutado por Sistema)"
     );
 
     return enviarExito(res, "Usuario restaurado correctamente");
@@ -344,7 +401,14 @@ async function createUserAsClient(req, res) {
   } = req.body;
 
   try {
-    const camposRequeridos = ["user_complete_name", "user_dni", "user_phone", "user_email", "user_password", "user_role"];
+    const camposRequeridos = [
+      "user_complete_name",
+      "user_dni",
+      "user_phone",
+      "user_email",
+      "user_password",
+      "user_role",
+    ];
     const validacion = validarCamposObligatorios(req.body, camposRequeridos);
     if (!validacion.valid) {
       return enviarSolicitudInvalida(res, validacion.error);
@@ -361,7 +425,10 @@ async function createUserAsClient(req, res) {
     }
 
     if (!canCreateRole(creator.user_role, user_role)) {
-      return enviarSinPermiso(res, "No tenés permiso para crear este tipo de usuario");
+      return enviarSinPermiso(
+        res,
+        "No tenés permiso para crear este tipo de usuario"
+      );
     }
 
     limiteOperadores = await companyController.getLimitOperator(company_id);
@@ -396,11 +463,11 @@ async function createUserAsClient(req, res) {
     /*LOGGER*/ await registrarNuevoLog(
       newUser.company_id,
       "El usuario " +
-      newUser.user_complete_name +
-      " ha sido creado" +
-      ". (Ejecutado por " +
-      req.user.user_name +
-      ")."
+        newUser.user_complete_name +
+        " ha sido creado" +
+        ". (Ejecutado por " +
+        req.user.user_name +
+        ")."
     );
 
     return enviarExito(res, "Usuario creado correctamente", 201);
@@ -443,21 +510,34 @@ async function editUserAsClient(req, res) {
       return enviarSolicitudInvalida(res, "No existe usuario bajo ese ID");
     }
 
-    const { data: patchData, hasEmpty, empty: camposVacios } = filtrarCamposPermitidos(req.body, allowedFields, true);
+    const {
+      data: patchData,
+      hasEmpty,
+      empty: camposVacios,
+    } = filtrarCamposPermitidos(req.body, allowedFields, true);
 
     if (hasEmpty) {
-      return enviarSolicitudInvalida(res, `El campo ${camposVacios.join(', ')} no puede estar vacío`);
+      return enviarSolicitudInvalida(
+        res,
+        `El campo ${camposVacios.join(", ")} no puede estar vacío`
+      );
     }
 
     if (Object.keys(patchData).length === 0) {
-      return enviarSolicitudInvalida(res, "No se proporcionaron campos para actualizar");
+      return enviarSolicitudInvalida(
+        res,
+        "No se proporcionaron campos para actualizar"
+      );
     }
 
     if (
       patchData.user_role &&
       !canCreateRole(creator.user_role, patchData.user_role)
     ) {
-      return enviarSinPermiso(res, "No tenés permiso para crear este tipo de usuario");
+      return enviarSinPermiso(
+        res,
+        "No tenés permiso para crear este tipo de usuario"
+      );
     }
 
     limiteOperadores = await companyController.getLimitOperator(company_id);
@@ -483,14 +563,22 @@ async function editUserAsClient(req, res) {
     }
 
     if (patchData.user_email) {
-      const existe = await verificarDuplicado(User, { user_email: patchData.user_email }, user_id);
+      const existe = await verificarDuplicado(
+        User,
+        { user_email: patchData.user_email },
+        user_id
+      );
       if (existe) {
         return enviarConflicto(res, "El email ya está registrado");
       }
     }
 
     if (patchData.user_dni) {
-      const existe = await verificarDuplicado(User, { user_dni: patchData.user_dni }, user_id);
+      const existe = await verificarDuplicado(
+        User,
+        { user_dni: patchData.user_dni },
+        user_id
+      );
       if (existe) {
         return enviarConflicto(res, "El DNI ya está registrado");
       }
@@ -514,11 +602,11 @@ async function editUserAsClient(req, res) {
     /*LOGGER*/ await registrarNuevoLog(
       user.company_id,
       "El usuario " +
-      user.user_complete_name +
-      " ha sido editado." +
-      " (Ejecutado por " +
-      creator.user_name +
-      ")."
+        user.user_complete_name +
+        " ha sido editado." +
+        " (Ejecutado por " +
+        creator.user_name +
+        ")."
     );
 
     return enviarExito(res, "Usuario editado correctamente");
@@ -570,18 +658,26 @@ async function blockUserAsClient(req, res) {
   const { user_id } = req.params;
 
   try {
-    const userToBlock = await obtenerPorId(User, user_id, { company_id: companyId });
+    const userToBlock = await obtenerPorId(User, user_id, {
+      company_id: companyId,
+    });
 
     if (!userToBlock) {
       return enviarSolicitudInvalida(res, "No existe usuario bajo ese ID");
     }
 
     if (!canManageAccess(req.user.user_role, userToBlock.user_role)) {
-      return enviarSinPermiso(res, "No tenés permiso para gestionar este usuario");
+      return enviarSinPermiso(
+        res,
+        "No tenés permiso para gestionar este usuario"
+      );
     }
 
     if (userToBlock.user_id === req.user.user_id)
-      return enviarSolicitudInvalida(res, "No puedes bloquear tu propio usuario");
+      return enviarSolicitudInvalida(
+        res,
+        "No puedes bloquear tu propio usuario"
+      );
 
     if (userToBlock.user_status === 0)
       return enviarSolicitudInvalida(res, "El usuario ya estaba bloqueado");
@@ -591,11 +687,11 @@ async function blockUserAsClient(req, res) {
     /*LOGGER*/ await registrarNuevoLog(
       userToBlock.company_id,
       "El usuario " +
-      userToBlock.user_complete_name +
-      " ha sido bloqueado." +
-      ". (Ejecutado por " +
-      req.user.user_name +
-      ")."
+        userToBlock.user_complete_name +
+        " ha sido bloqueado." +
+        ". (Ejecutado por " +
+        req.user.user_name +
+        ")."
     );
 
     return enviarExito(res, "Usuario bloqueado correctamente");
@@ -612,18 +708,26 @@ async function unblockUserAsClient(req, res) {
   const { user_id } = req.params;
 
   try {
-    const userToUnblock = await obtenerPorId(User, user_id, { company_id: companyId });
+    const userToUnblock = await obtenerPorId(User, user_id, {
+      company_id: companyId,
+    });
 
     if (!userToUnblock) {
       return enviarSolicitudInvalida(res, "No existe usuario bajo ese ID");
     }
 
     if (!canManageAccess(req.user.user_role, userToUnblock.user_role)) {
-      return enviarSinPermiso(res, "No tenés permiso para gestionar este usuario");
+      return enviarSinPermiso(
+        res,
+        "No tenés permiso para gestionar este usuario"
+      );
     }
 
     if (userToUnblock.user_id === req.user.user_id)
-      return enviarSolicitudInvalida(res, "No puedes desbloquear tu propio usuario");
+      return enviarSolicitudInvalida(
+        res,
+        "No puedes desbloquear tu propio usuario"
+      );
 
     if (userToUnblock.user_status === 1)
       return enviarSolicitudInvalida(res, "El usuario ya estaba desbloqueado");
@@ -633,11 +737,11 @@ async function unblockUserAsClient(req, res) {
     /*LOGGER*/ await registrarNuevoLog(
       userToUnblock.company_id,
       "El usuario " +
-      userToUnblock.user_complete_name +
-      " ha sido bloqueado." +
-      ". (Ejecutado por " +
-      req.user.user_name +
-      ")."
+        userToUnblock.user_complete_name +
+        " ha sido bloqueado." +
+        ". (Ejecutado por " +
+        req.user.user_name +
+        ")."
     );
 
     return enviarExito(res, "Usuario desbloqueado correctamente");
@@ -656,20 +760,31 @@ async function restoreUserAsClient(req, res) {
     const { new_password } = req.body;
 
     if (!new_password) {
-      return enviarSolicitudInvalida(res, "Debes ingresar una nueva contraseña");
+      return enviarSolicitudInvalida(
+        res,
+        "Debes ingresar una nueva contraseña"
+      );
     }
 
-    const userToRestore = await obtenerPorId(User, user_id, { company_id: companyId });
+    const userToRestore = await obtenerPorId(User, user_id, {
+      company_id: companyId,
+    });
     if (!userToRestore) {
       return enviarSolicitudInvalida(res, "No existe usuario bajo ese ID");
     }
 
     if (userToRestore.user_status === 1) {
-      return enviarSolicitudInvalida(res, "El usuario ya se encuentra habilitado");
+      return enviarSolicitudInvalida(
+        res,
+        "El usuario ya se encuentra habilitado"
+      );
     }
 
     if (!canManageAccess(req.user.user_role, userToRestore.user_role)) {
-      return enviarSinPermiso(res, "No tenés permiso para gestionar este usuario");
+      return enviarSinPermiso(
+        res,
+        "No tenés permiso para gestionar este usuario"
+      );
     }
 
     await resetPassword(user_id, new_password);
@@ -677,20 +792,20 @@ async function restoreUserAsClient(req, res) {
 
     await messageController.createMessageCustom({
       platform_message_title: "Cuenta habilitada",
-      platform_message_content: "Hemos reestablecido tu cuenta con una contraseña provisoria. Te recomendamos cambiarla por una más segura desde la seccion de tu Perfil.",
+      platform_message_content:
+        "Hemos reestablecido tu cuenta con una contraseña provisoria. Te recomendamos cambiarla por una más segura desde la seccion de tu Perfil.",
       user_id: userToRestore.user_id,
       company_id: userToRestore.company_id,
-
     });
 
     /*LOGGER*/ await registrarNuevoLog(
       userToRestore.company_id,
       "El usuario " +
-      userToRestore.user_complete_name +
-      " ha sido desbloqueado y la contraseña ha sido reestablecida." +
-      ". (Ejecutado por " +
-      req.user.user_name +
-      ")."
+        userToRestore.user_complete_name +
+        " ha sido desbloqueado y la contraseña ha sido reestablecida." +
+        ". (Ejecutado por " +
+        req.user.user_name +
+        ")."
     );
 
     return enviarExito(res, "Usuario restaurado correctamente");
@@ -711,7 +826,11 @@ async function getWorkloadState(req, res) {
 
   try {
     const userWorkloadState = await obtenerPorId(User, user_id);
-    return res.json(userWorkloadState.apto_recibir == 1 ? true : false);
+    return res.json(
+      userWorkloadState.apto_recibir == 1
+        ? { enabled: true }
+        : { enabled: false }
+    );
   } catch (error) {
     return enviarError(res, "Error interno del servidor", 500);
   }
@@ -727,7 +846,10 @@ async function enableReceiveWork(req, res) {
     const userAvailableWork = await obtenerPorId(User, user_id);
 
     if (userAvailableWork.apto_recibir === 1) {
-      return enviarSolicitudInvalida(res, "El profesional ya estaba habilitado para recibir trabajos");
+      return enviarSolicitudInvalida(
+        res,
+        "El profesional ya estaba habilitado para recibir trabajos"
+      );
     }
 
     await User.query().findById(user_id).patch({ apto_recibir: true });
@@ -748,7 +870,10 @@ async function disableReceiveWork(req, res) {
     const userAvailableWork = await obtenerPorId(User, user_id);
 
     if (userAvailableWork.apto_recibir === 0) {
-      return enviarSolicitudInvalida(res, "El profesional ya estaba deshabilitado para recibir trabajos");
+      return enviarSolicitudInvalida(
+        res,
+        "El profesional ya estaba deshabilitado para recibir trabajos"
+      );
     }
 
     await User.query().findById(user_id).patch({ apto_recibir: false });

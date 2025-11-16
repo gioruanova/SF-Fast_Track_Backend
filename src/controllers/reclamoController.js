@@ -290,7 +290,7 @@ async function getReclamosAsProfesionalById(req, res) {
       return enviarNoEncontrado(res, "Reclamo");
     }
 
-    return enviarLista(res, resultado);
+    return enviarLista(res, reclamo);
   } catch (error) {
     return enviarError(res, "Error interno del servidor", 500);
   }
@@ -306,7 +306,7 @@ async function updateReclamoAsProfesional(req, res) {
 
   const { reclamo_nota_cierre, reclamo_presupuesto, reclamo_estado } = req.body;
 
-  if (reclamo_estado === "CERRADO") {
+  if (reclamo_estado === "CERRADO" || reclamo_estado === "CANCELADO") {
     if (!reclamo_nota_cierre) {
       return enviarErrorReclamo(res, "La nota de cierre es requerida", 400);
     }
@@ -322,7 +322,7 @@ async function updateReclamoAsProfesional(req, res) {
       return enviarNoEncontrado(res, "Reclamo");
     }
 
-    if (reclamoExiste.reclamo_estado === "CERRADO" || reclamo_estado === "CANCELADO") {
+    if (reclamoExiste.reclamo_estado === "CERRADO" || reclamoExiste.reclamo_estado === "CANCELADO") {
       return enviarErrorReclamo(res, "El reclamo ya esta cerrado", 400);
     }
 

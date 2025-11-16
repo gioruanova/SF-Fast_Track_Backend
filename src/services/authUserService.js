@@ -1,13 +1,9 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const { generateTokens, refreshAccessToken } = require("./tokenService");
-const userLoggerController = require("../controllers/userLoggerController");
-const userController = require("../controllers/userController");
-const messageController = require("../controllers/cfv/publicMessagesController");
-
-const { registrarNuevoLog } = require("../controllers/globalLogController");
 
 async function loginUser(email, password) {
+  
   const user = await User.query().findOne({ user_email: email });
 
   if (!user) return null;
@@ -20,45 +16,6 @@ async function loginUser(email, password) {
 
   const valid = await bcrypt.compare(password, user.user_password);
 
-  if (!valid) {
-    let fallosPrevios = await userLoggerController.contarLogsPorUsuario(
-      user.user_id
-    );
-
-    if (fallosPrevios < 3) {
-      await userLoggerController.registrarIntentoFallido(user.user_id);
-      fallosPrevios = await userLoggerController.contarLogsPorUsuario(
-        user.user_id
-      );
-      return null;
-    }
-
-    fallosPrevios = await userLoggerController.contarLogsPorUsuario(user.user_id);
-
-
-
-    if (fallosPrevios == 3) {
-      await userController.bloquearUsuarioPorId(user.user_id);
-      registrarNuevoLog(
-        user.company_id,
-        "El usuario " +
-        user.user_complete_name +
-        " ha sido bloqueado por varios intentos fallidos de ingreso."
-      );
-      if (user.user_role === "owner") {
-
-        await messageController.createInternalMessageAsPlatform(
-          user.user_email,
-          `Bloqueo de usuario ${user.user_complete_name}\n` + `Revisar el estado en la opcion <a class="font-medium text-primary hover:underline" href="/dashboard/superadmin/users">usuarios</a>.`,
-          "BLOQUEO PROPIETARIO"
-        );
-      }
-
-
-      return { error: "blocked" };
-    }
-  }
-
   const payload = {
     user_id: user.user_id,
     user_role: user.user_role.toLowerCase(),
@@ -69,8 +26,6 @@ async function loginUser(email, password) {
   };
 
   const { accessToken, refreshToken } = generateTokens(payload);
-  await userLoggerController.eliminarLogsPorUsuario(user.user_id);
-
 
   return {
     accessToken,

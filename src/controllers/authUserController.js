@@ -12,6 +12,7 @@ const ms = require("ms");
 // LOGIN
 // -----------------
 async function login(req, res) {
+  
   try {
     const { email, password } = req.body;
     if (!email || !password)
