@@ -20,11 +20,9 @@ function authUserWithStatus({ roles = [], skipCompanyCheck = false } = {}) {
       if (!skipCompanyCheck) {
         const company = await Company.query().findById(company_id);
         if (!company || company.company_estado !== 1) {
-          return res
-            .status(403)
-            .json({
-              error: "Contacte al administrador del sistema por favor.",
-            });
+          return res.status(403).json({
+            error: "Contacte al administrador del sistema por favor.",
+          });
         }
       }
 

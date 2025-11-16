@@ -3,7 +3,15 @@
 // -----------------
 const User = require("../models/User");
 const { loginUser, refreshUserToken } = require("../services/authUserService");
-const { enviarExito, enviarExitoConDatos, enviarError, enviarNoEncontrado, enviarNoAutenticado, enviarSolicitudInvalida, enviarSinPermiso } = require("../helpers/responseHelpers");
+const {
+  enviarExito,
+  enviarExitoConDatos,
+  enviarError,
+  enviarNoEncontrado,
+  enviarNoAutenticado,
+  enviarSolicitudInvalida,
+  enviarSinPermiso,
+} = require("../helpers/responseHelpers");
 const { obtenerPorId } = require("../helpers/registroHelpers");
 const jwt = require("jsonwebtoken");
 const ms = require("ms");
@@ -12,15 +20,13 @@ const ms = require("ms");
 // LOGIN
 // -----------------
 async function login(req, res) {
-  
   try {
     const { email, password } = req.body;
     if (!email || !password)
       return enviarSolicitudInvalida(res, "Email y password son requeridos");
 
     const result = await loginUser(email, password);
-    if (!result)
-      return enviarNoAutenticado(res, "Credenciales inválidas");
+    if (!result) return enviarNoAutenticado(res, "Credenciales inválidas");
 
     if (result.error === "blocked") {
       return enviarSinPermiso(res, "Contacte a su administrador");
@@ -118,6 +124,12 @@ async function getProfile(req, res) {
         company_id: company.company_id || null,
         company_name: company.company_nombre || null,
         company_status: company.company_estado || null,
+        user_phone: user.user_phone || null,
+        company_phone: company.company_phone || null,
+        company_email: company.company_email || null,
+        company_whatsapp: company.company_whatsapp || null,
+        company_telegram: company.company_telegram || null,
+        user_dni: user.user_dni || null,
       });
     }
   } catch (error) {

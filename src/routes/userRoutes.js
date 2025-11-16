@@ -32,12 +32,14 @@ const notificationController = require("../controllers/notificationController");
 // Manejo de company
 router.get(
   "/company/companyInfo",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   companyController.getCompanyInfoAsClientForOnwer
 );
 router.get(
   "/company/companyStatus",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   companyConfigController.getCompanySettingsByClientForOwner
 );
 router.get(
@@ -51,46 +53,57 @@ router.get(
 
 router.put(
   "/company",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   companyController.updateCompanyAsClient
 );
 router.put(
   "/company/config",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   companyConfigController.updateCompanySettingsByClient
 );
 
 // Manejo de users
 router.get(
   "/users",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
   userController.getUsersAsClient
+);
+router.put(
+  "/profile/manage",
+  authUserWithStatus({ roles: ["owner", "operador", "profesional"] }),
+  userController.manageProfile
 );
 
 router.post(
   "/users",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   userController.createUserAsClient
 );
 router.put(
   "/users/:user_id",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
   userController.editUserAsClient
 );
 
 router.post(
   "/users/block/:user_id",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   userController.blockUserAsClient
 );
 router.post(
   "/users/unblock/:user_id",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   userController.unblockUserAsClient
 );
 router.put(
   "/users/restore/:user_id",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   userController.restoreUserAsClient
 );
 
@@ -98,161 +111,180 @@ router.put(
 // Manejo de especialidades
 router.get(
   "/especialidades",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   especialidadController.getAllEspecialidades
 );
 
 router.post(
   "/especialidades",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   especialidadController.createEspecialidadAsClient
 );
 router.put(
   "/especialidades/:especialidadId",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   especialidadController.updateEspecialidadAsClient
 );
 
 router.put(
   "/especialidades/block/:especialidadId",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   especialidadController.disableEspecialidadAsClient
 );
 router.put(
   "/especialidades/unblock/:especialidadId",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   especialidadController.enableEspecialidadAsClient
 );
 
 router.post(
   "/profesionalEspecialidad",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   profesionalEspecialidadController.assignEspecialidadAsClient
 );
 
 router.get(
   "/asignaciones",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   profesionalEspecialidadController.getProfesionalEspecialidadAsClient
 );
 
 router.delete(
   "/profesionalEspecialidad/:id_asignacion",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   profesionalEspecialidadController.deleteEspecialidadAsClient
 );
 router.put(
   "/profesionalEspecialidad/:id_asignacion",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   profesionalEspecialidadController.editAsignacionEspecialidadAsClient
 );
 
 // Manejo de clientes recurrentes
 router.get(
   "/clientes-recurrentes",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   clientesRecurrentesController.getAllClientesRecurrentesAsClient
 );
 
 router.post(
   "/clientes-recurrentes",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   clientesRecurrentesController.createClienteRecurrenteAsClient
 );
 
 // TODO: Documentar endpoint
 router.put(
   "/clientes-recurrentes/:cliente_id",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   clientesRecurrentesController.editarClienteAsClient
 );
 
 // TODO: Documentar endpoint
 router.put(
   "/clientes-recurrentes/unblock/:cliente_id",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   clientesRecurrentesController.activarClienteAsClient
 );
 
 // TODO: Documentar endpoint
 router.put(
   "/clientes-recurrentes/block/:cliente_id",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   clientesRecurrentesController.desactivarClienteAsClient
 );
 
-
 router.get(
   "/reclamos/agendaReclamo",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   agendaReclamoController.getAgendaReclamo
 );
 router.post(
   "/disponibilidad/:user_id",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   disponibilidadController.getDisponibilidadBloqueadaByProfesioanlAsAdmin
 );
 
 // Reclamos como owner / operador
 router.post(
   "/reclamo",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   reclamoController.createReclamo
 );
 router.get(
   "/reclamos",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   reclamoController.getReclamosAsClient
 );
 router.get(
   "/reclamos/gestion/:reclamo_id",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   reclamoController.getReclamosAsClientById
 );
 router.put(
   "/reclamos/gestion/:reclamo_id",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   reclamoController.updateReclamoAsClient
 );
 
 router.put(
   "/reclamos/reminder/:reclamo_id",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   reclamoController.sendReminderToProfesional
 );
 
 // Reclamos como profesional
 router.get(
   "/reclamos/profesional",
-  authUserWithStatus("profesional"),
+  authUserWithStatus({ roles: ["profesional"] }),
   reclamoController.getReclamosAsProfesional
 );
 router.get(
   "/reclamos/profesional/gestion/:reclamo_id",
-  authUserWithStatus("profesional"),
+  authUserWithStatus({ roles: ["profesional"] }),
   reclamoController.getReclamosAsProfesionalById
 );
 router.put(
   "/reclamos/profesional/gestion/:reclamo_id",
-  authUserWithStatus("profesional"),
+  authUserWithStatus({ roles: ["profesional"] }),
   reclamoController.updateReclamoAsProfesional
 );
-
 
 // deshabilita/habilita la poisibilidad de recibir trabajo
 router.get(
   "/workload/estado",
-  authUserWithStatus("profesional"),
+  authUserWithStatus({ roles: ["profesional"] }),
   userController.getWorkloadState
 );
 router.put(
   "/workload/enable",
-  authUserWithStatus("profesional"),
+  authUserWithStatus({ roles: ["profesional"] }),
   userController.enableReceiveWork
 );
 router.put(
   "/workload/disable",
-  authUserWithStatus("profesional"),
+  authUserWithStatus({ roles: ["profesional"] }),
   userController.disableReceiveWork
 );
 
@@ -260,22 +292,26 @@ router.put(
 // Manejo de Logs
 router.get(
   "/globalLogs",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   globalLogController.getAllLogsAsClient
 );
 router.put(
   "/globalLogs/read",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   globalLogController.markAllLogsAsReadAsClient
 );
 router.put(
   "/globalLogs/unread",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   globalLogController.markAllLogsAsUnreadAsClient
 );
 router.delete(
   "/globalLogs",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   globalLogController.deleteLogsAsClient
 );
 
@@ -294,17 +330,20 @@ router.get(
 );
 router.post(
   "/platform/messages",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   messageController.createMessageForCompanyAsClient
 );
 router.post(
   "/platform/messages/user/:user_id",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   messageController.createMessageForUserAsClient
 );
 router.delete(
   "/platform/messages/:platform_message_id",
-  authUserWithStatus("owner"),
+  authUserWithStatus({ roles: ["owner"] }),
+
   messageController.deleteCompanyMessagesAsClient
 );
 router.delete(
@@ -336,12 +375,14 @@ router.get(
 // VISTAS
 router.get(
   "/vistas/profesionales",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   exportProfesionalesController.exportProfesionalesToExcel
 );
 router.get(
   "/vistas/reclamos/:status",
-  authUserWithStatus("owner", "operador"),
+  authUserWithStatus({ roles: ["owner", "operador"] }),
+
   exportReclamosController.exportReclamosToExcel
 );
 
@@ -2057,7 +2098,6 @@ module.exports = router;
  *         description: Error interno del servidor
  */
 
-
 /**
  * @swagger
  * /customersApi/active-banner:
@@ -2396,7 +2436,6 @@ module.exports = router;
  *                   example: "Error al desregistrar el token específico"
  */
 
-
 /**
  * @swagger
  * /customersApi/asignaciones:
@@ -2438,7 +2477,6 @@ module.exports = router;
  *       500:
  *         description: Error interno del servidor
  */
-
 
 /**
  * @swagger

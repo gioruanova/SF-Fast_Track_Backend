@@ -619,6 +619,7 @@ async function editUserAsClient(req, res) {
 // OBTENER USUARIOS COMO CLIENTE
 // -----------------
 async function getUsersAsClient(req, res) {
+
   const companyId = req.user.company_id;
 
   try {
@@ -1027,6 +1028,91 @@ async function getProfesionalesDetailAsClient(req, res) {
   }
 }
 
+// -----------------
+// GESTIONAR PERFIL
+// -----------------
+async function manageProfile(req, res) {
+  const company_id = req.user.company_id;
+  const user_id = req.user.user_id;
+
+  const allowedFields = [
+    "user_complete_name",
+    "user_dni",
+    "user_phone",
+    "user_email",
+    "user_password",
+    "user_status",
+  ];
+
+  try {
+    const user = await obtenerPorId(User, user_id, { company_id });
+    if (!user) {
+      return enviarSolicitudInvalida(res, "No existe usuario bajo ese ID");
+    }
+
+    const {
+      data: patchData,
+      hasEmpty,
+      empty: camposVacios,
+    } = filtrarCamposPermitidos(req.body, allowedFields, true);
+
+    if (hasEmpty) {
+      return enviarSolicitudInvalida(
+        res,
+        `El campo ${camposVacios.join(", ")} no puede estar vacío`
+      );
+    }
+
+    if (Object.keys(patchData).length === 0) {
+      return enviarSolicitudInvalida(
+        res,
+        "No se proporcionaron campos para actualizar"
+      );
+    }
+
+    if (patchData.user_email) {
+      const existe = await verificarDuplicado(
+        User,
+        { user_email: patchData.user_email },
+        user_id
+      );
+      if (existe) {
+        return enviarConflicto(res, "El email ya está registrado");
+      }
+    }
+
+    if (patchData.user_dni) {
+      const existe = await verificarDuplicado(
+        User,
+        { user_dni: patchData.user_dni },
+        user_id
+      );
+      if (existe) {
+        return enviarConflicto(res, "El DNI ya está registrado");
+      }
+    }
+
+    if (patchData.user_password) {
+      const same = await bcrypt.compare(
+        patchData.user_password,
+        user.user_password
+      );
+      if (same) delete patchData.user_password;
+      else
+        patchData.user_password = bcrypt.hashSync(
+          patchData.user_password,
+          saltRounds
+        );
+    }
+
+    await User.query().findById(user_id).patch(patchData);
+
+    return enviarExito(res, "Usuario editado correctamente");
+  } catch (e) {
+    return enviarError(res, "Error interno del servidor", 500);
+  }
+}
+
 module.exports = {
   getUsersAsAdmin,
   getUsersByCompanyAsAdmin,
@@ -1043,6 +1129,7 @@ module.exports = {
   unblockUserAsClient,
   restoreUserAsClient,
 
+  manageProfile,
   getWorkloadState,
   enableReceiveWork,
   disableReceiveWork,
