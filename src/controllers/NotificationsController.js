@@ -36,7 +36,14 @@ async function sendNotification(req, res) {
     }
 }
 
+
+async function auxiliarNotificationMethod(userId, title, body) {
+    const result = await sendNotificationToUser(userId, title, body);
+    return result;
+}
+
 module.exports = {
     registerToken,
-    sendNotification
+    sendNotification,
+    auxiliarNotificationMethod
 };

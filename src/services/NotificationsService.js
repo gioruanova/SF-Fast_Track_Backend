@@ -18,7 +18,6 @@ async function saveToken(userId, expoPushToken, platform = "android") {
         });
     }
 
-    console.log(`Token registrado/actualizado para user_id=${userId}`);
     return true;
 }
 
@@ -31,11 +30,13 @@ async function getToken(userId) {
     return tokenRow ? tokenRow.expo_push_token : null;
 }
 
+// Obtener todos los tokens registrados (para enviar notificaciones masivas)    
 async function getAllTokens() {
     const tokens = await UserPushToken.query().select("expo_push_token");
     return tokens.map((t) => t.expo_push_token);
 }
 
+// Enviar notificación a un usuario
 async function sendNotificationToUser(userId, title, body) {
     const expoPushToken = await getToken(userId);
 
@@ -62,11 +63,11 @@ async function sendNotificationToUser(userId, title, body) {
     });
 
     const data = await response.json();
-    console.log("Respuesta Expo API:", data);
 
     return data;
 }
 
+// Exportar cada función individualmente
 module.exports = {
     saveToken,
     getToken,

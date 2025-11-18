@@ -15,6 +15,7 @@ const reclamoController = require("../controllers/reclamoController");
 const clientesRecurrentesController = require("../controllers/clientesRecurrentesController");
 const agendaReclamoController = require("../controllers/agendaReclamoController");
 const disponibilidadController = require("../controllers/disponibilidadController");
+const feedbackController = require("../controllers/FeedbackController");
 
 
 // utilitarios
@@ -84,7 +85,7 @@ router.get("/reclamos", authUserWithStatus({ roles: ["owner", "operador"] }), re
 router.get("/reclamos/gestion/:reclamo_id", authUserWithStatus({ roles: ["owner", "operador"] }), reclamoController.getReclamosAsClientById);
 router.put("/reclamos/gestion/:reclamo_id", authUserWithStatus({ roles: ["owner", "operador"] }), reclamoController.updateReclamoAsClient);
 
-router.put("/reclamos/reminder/:reclamo_id", authUserWithStatus({ roles: ["owner", "operador"] }), reclamoController.sendReminderToProfesional);
+router.put("/reclamos/recordatorio/:reclamo_id", authUserWithStatus({ roles: ["owner", "operador"] }), reclamoController.recordatorioReclamo);
 
 // Reclamos como profesional
 router.get("/reclamos/profesional", authUserWithStatus({ roles: ["profesional"] }), reclamoController.getReclamosAsProfesional);
@@ -107,6 +108,11 @@ router.get("/vistas/reclamos/:status", authUserWithStatus({ roles: ["owner", "op
 // Notificaciones para mobile
 router.post("/notifications", authUserWithStatus({ roles: ["profesional"] }), notificationsController.registerToken);
 router.post("/send-notifications", authUserWithStatus({ roles: ["profesional"] }), notificationsController.sendNotification);
+
+
+// --------------------------------------------------------------------------------------------------------------
+// Manejo de feedbacks
+router.post("/platform/feedback", authUserWithStatus({ roles: ["owner", "operador", "profesional"] }), feedbackController.createFeedback);
 
 
 module.exports = router;
@@ -1446,7 +1452,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /customersApi/platform/feedback:
+ * /customersApi/feedback:
  *   post:
  *     summary: FEEDBACK - Enviar feedback
  *     description: Envía feedback a la plataforma (Todos los roles)

@@ -14,6 +14,7 @@ const companyConfigController = require("./companyConfigController");
 const CompaniesConfig = require("../models/CompaniesConfig");
 const { enviarLista, enviarError, enviarErrorReclamo, enviarExitoReclamo, enviarExito, enviarNoEncontrado } = require("../helpers/responseHelpers");
 const { obtenerPorId } = require("../helpers/registroHelpers");
+const NotificationsController = require("./NotificationsController");
 
 // -----------------
 // CONTROLADORES PARA ADMIN:
@@ -138,12 +139,49 @@ async function createReclamo(req, res) {
     });
 
     const profesionalUser = await User.query().findById(data.profesional_id);
-    notificacionNuevoReclamo(nuevoReclamo, profesionalUser, creator);
+
+    await NotificationsController.auxiliarNotificationMethod(
+      profesionalUser.user_id,
+      `Nueva Incidencia Asignada`,
+      companyConfig.string_inicio_reclamo_profesional,
+    );
 
     return enviarExitoReclamo(res, "Reclamo creado exitosamente", 201);
   } catch (error) {
     console.error(error);
     return enviarError(res, "Error creando reclamo", 500);
+  }
+}
+
+async function recordatorioReclamo(req, res) {
+  try {
+    const reclamo_id = parseInt(req.params.reclamo_id, 10);
+
+    // necesito que este endpoint reciba el reclamo_id y a traves de ese reclamo, si esta distinto a CANCELADO o CERRADO, 
+    // validando que el reclamo corresponda a la empresa del usuario que esta haciendo la peticion
+    const reclamo = await Reclamo.query().findById(reclamo_id);
+    if (!reclamo) {
+      return enviarNoEncontrado(res, "Reclamo");
+    }
+    if (reclamo.reclamo_estado === "CANCELADO" || reclamo.reclamo_estado === "CERRADO") {
+      return enviarError(res, "Reclamo no puede ser recordatorio", 400);
+    }
+
+    // envie la notificacion que esta aca:
+
+    const companyConfig = await companyConfigController.fetchCompanySettingsByCompanyId(reclamo.company_id);
+    const profesionalUser = await User.query().findById(reclamo.profesional_id);
+
+
+    await NotificationsController.auxiliarNotificationMethod(
+      profesionalUser.user_id,
+      `Recordatorio de incidencia`,
+      companyConfig.string_recordatorio_reclamo_profesional,
+    );
+    return enviarExito(res, "Recordatorio de incidencia enviado correctamente", 200);
+  } catch (error) {
+    console.error(error);
+    return enviarError(res, "Error enviando recordatorio de incidencia", 500);
   }
 }
 
@@ -225,7 +263,15 @@ async function updateReclamoAsClient(req, res) {
     const companyConfig = await companyConfigController.fetchCompanySettingsByCompanyId(reclamoExiste.company_id);
 
     const profesionalUser = await User.query().findById(reclamoExiste.profesional_id);
-    actualizacionReclamo(reclamoExiste, profesionalUser, req.user, reclamoActualizado.reclamo_estado);
+
+
+    await NotificationsController.auxiliarNotificationMethod(
+      profesionalUser.user_id,
+      `Actualizacion en Incidencia`,
+      companyConfig.string_actualizacion_reclamo_profesional,
+
+    );
+
 
     return enviarExitoReclamo(res, "Reclamo actualizado correctamente", 200);
   } catch (error) {
@@ -317,12 +363,7 @@ async function updateReclamoAsProfesional(req, res) {
       const companyConfig = await companyConfigController.fetchCompanySettingsByCompanyId(reclamoExiste.company_id);
       const compUsers = await User.query().select().where("user_role", "operador");
 
-      for (const cu of compUsers) {
-        const user = await User.query().findById(cu.user_id);
-        if (user) {
-          actualizacionReclamoOperador(reclamoExiste, user, req.user, reclamoActualizado.reclamo_estado);
-        }
-      }
+
 
       return enviarExitoReclamo(res, "Reclamo actualizado correctamente", 200);
     }
@@ -331,51 +372,7 @@ async function updateReclamoAsProfesional(req, res) {
   }
 }
 
-// -----------------
-// ENVIAR RECORDATORIO A PROFESIONAL
-// -----------------
-async function sendReminderToProfesional(req, res) {
-  try {
-    const reclamo_id = parseInt(req.params.reclamo_id, 10);
 
-    // Buscar el reclamo por ID
-    const reclamo = await Reclamo.query()
-      .findById(reclamo_id)
-      .withGraphFetched("[profesional, company]");
-
-    if (!reclamo) {
-      return enviarNoEncontrado(res, "Reclamo");
-    }
-
-    // Obtener el profesional
-    const profesional = await obtenerPorId(User, reclamo.profesional_id);
-
-    if (!profesional) {
-      return enviarNoEncontrado(res, "Profesional");
-    }
-
-    // Obtener config de la empresa
-    const companyConfig = await CompaniesConfig.query()
-      .select()
-      .where("company_id", reclamo.company_id)
-      .first();
-
-    // Crear mensaje de recordatorio
-    const mensajeRecordatorio = `Recordatorio de ${companyConfig.sing_heading_reclamos} pendiente de atender.` +
-      "\n\n" +
-      "ID: " +
-      reclamo.reclamo_id +
-      " - " +
-      reclamo.reclamo_titulo +
-      "\n\n" +
-      `Revisa tus ${companyConfig.plu_heading_reclamos} en curso ` + `<a class="font-medium text-primary hover:underline" href="/dashboard/profesional/trabajar-reclamos">aquí</a>.`;
-
-    return enviarExito(res, "Recordatorio enviado al profesional correctamente");
-  } catch (error) {
-    console.error("Error enviando recordatorio:", error);
-    return enviarError(res, "Error interno del servidor", 500);
-  }
-}
 
 // -----------------
 // HELPERS DE VALIDACIÓN:
@@ -535,70 +532,8 @@ async function fetchReclamosByCompanyId(_company_id, _user_id) {
 // HELPERS DE NOTIFICACIÓN:
 // -----------------
 
-// -----------------
-// NOTIFICACIÓN DE NUEVO RECLAMO
-// -----------------
-async function notificacionNuevoReclamo(reclamo, user, creator) {
-  const companyConfig = await CompaniesConfig.query()
-    .select()
-    .where("company_id", reclamo.company_id)
-    .first();
 
-  const nuevoReclamoMensaje = companyConfig.string_inicio_reclamo_profesional +
-    "\n\n" +
-    "ID: " +
-    reclamo.reclamo_id +
-    " - " +
-    reclamo.reclamo_titulo +
-    "\n\n" +
-    `Revisa tus ${companyConfig.plu_heading_reclamos} en curso ` + `<a class="font-medium text-primary hover:underline" href="/dashboard/profesional/trabajar-reclamos">aquí</a>.`;
 
-}
-
-// -----------------
-// NOTIFICACIÓN DE ACTUALIZACIÓN DE RECLAMO
-// -----------------
-async function actualizacionReclamo(reclamo, user, creator, nuevoEstado) {
-  const companyConfig = await CompaniesConfig.query()
-    .select()
-    .where("company_id", reclamo.company_id)
-    .first();
-
-  const estadoReclamo = nuevoEstado == "CERRADO" || nuevoEstado == "CANCELADO" ? { estado: `Revisa tu historial de ${companyConfig.plu_heading_reclamos}`, path: "/dashboard/profesional/historial-reclamos" } : { estado: `Revisa tus ${companyConfig.plu_heading_reclamos} en curso `, path: "/dashboard/profesional/trabajar-reclamos" };
-  const nuevoReclamoMensaje = companyConfig.string_actualizacion_reclamo_profesional +
-    "\n\n" +
-    "ID: " +
-    reclamo.reclamo_id +
-    " - " +
-    reclamo.reclamo_titulo +
-    "\n\n" +
-    `${estadoReclamo.estado} ` + `<a class="font-medium text-primary hover:underline" href="${estadoReclamo.path}">aquí</a>.`;
-
-}
-
-// -----------------
-// NOTIFICACIÓN DE ACTUALIZACIÓN DE RECLAMO PARA OPERADORES
-// -----------------
-async function actualizacionReclamoOperador(reclamo, user, creator, nuevoEstado) {
-  const companyConfig = await CompaniesConfig.query()
-    .select()
-    .where("company_id", reclamo.company_id)
-    .first();
-
-  const estadoReclamo = nuevoEstado == "CERRADO" || nuevoEstado == "CANCELADO" ? { estado: `Revisa el historial de ${companyConfig.plu_heading_reclamos} de la empresa`, path: "/dashboard/operador/historial-reclamos" } : { estado: `Revisa el reporte de  ${companyConfig.plu_heading_reclamos} en curso `, path: "/dashboard/operador/trabajar-reclamos" };
-
-  const userNameProfesional = await User.query().findById(reclamo.profesional_id);
-
-  const nuevoReclamoMensaje = `Se registro actualizacion en  ${companyConfig.sing_heading_reclamos} con asignacion al ${companyConfig.sing_heading_profesional}: ${userNameProfesional.user_complete_name}. ` +
-    "\n\n" +
-    "ID: " +
-    reclamo.reclamo_id +
-    " - " +
-    reclamo.reclamo_titulo +
-    "\n\n" +
-    `${estadoReclamo.estado} ` + `<a class="font-medium text-primary hover:underline" href="${estadoReclamo.path}">aquí</a>.`;
-
-}
 
 module.exports = {
   getReclamosAsAdmin,
@@ -608,11 +543,11 @@ module.exports = {
   getReclamosAsClient,
   getReclamosAsClientById,
   updateReclamoAsClient,
-  sendReminderToProfesional,
 
   getReclamosAsProfesional,
   getReclamosAsProfesionalById,
   updateReclamoAsProfesional,
 
   fetchReclamosByCompanyId,
+  recordatorioReclamo,
 };

@@ -11,6 +11,7 @@ const clienteRecurrenteController = require("../controllers/clientesRecurrentesC
 const especialidadController = require("../controllers/especialidadController");
 const profesionalEspecialidadController = require("../controllers/profesionalEspecialidadController");
 const reclamoController = require("../controllers/reclamoController");
+const feedbackController = require("../controllers/FeedbackController");
 // =======================
 // Middleware global para rutas protegidas
 router.use(authSuperadmin);
@@ -63,7 +64,11 @@ router.get("/reclamos", reclamoController.getReclamosAsAdmin);
 router.get("/reclamos/:company_id", reclamoController.getReclamosByCompanyAsAdmin);
 
 
-
+// --------------------------------------------------------------------------------------------------------------
+// Manejo de feedbacks
+router.get("/platform/feedbacks", feedbackController.getFeedbacks);
+router.get("/platform/feedbacks/:feedback_id", feedbackController.getFeedbackById);
+router.delete("/platform/feedbacks/:feedback_id", feedbackController.deleteFeedback);
 
 module.exports = router;
 
